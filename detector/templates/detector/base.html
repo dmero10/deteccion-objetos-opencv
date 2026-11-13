@@ -1,0 +1,28 @@
+{% load static %}<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>{% block titulo %}Detector de objetos{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'detector/estilos.css' %}">
+</head>
+<body>
+  <header class="barra">
+    <div class="marca">
+      <span class="logo" aria-hidden="true"></span>
+      <span>Detector de objetos</span>
+    </div>
+    <nav>
+      <a href="{% url 'detector:index' %}" class="{% if request.resolver_match.url_name == 'index' %}activo{% endif %}">En vivo</a>
+    </nav>
+  </header>
+
+  <main class="contenedor">
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer class="pie">Django + OpenCV · Construcción de Software · UNEMI</footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

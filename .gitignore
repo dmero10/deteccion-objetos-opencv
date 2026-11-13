@@ -1,0 +1,30 @@
+# Entorno virtual (no se entrega)
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Configuración local y secretos
+.env
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+
+# Archivos de modelos pesados (se descargan con un script)
+*.weights
+*.onnx
+*.pb
+
+# Material de referencia
+*.zip
+
+# Editor / sistema
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

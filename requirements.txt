@@ -1,0 +1,4 @@
+Django>=5.2,<6.0
+opencv-python>=4.9,<5
+numpy>=1.26
+psycopg[binary]>=3.2

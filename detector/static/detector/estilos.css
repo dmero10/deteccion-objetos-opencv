@@ -1,0 +1,144 @@
+:root {
+  --fondo: #f4f6fa;
+  --tarjeta: #ffffff;
+  --texto: #1d2433;
+  --suave: #5f6b7e;
+  --borde: #e2e6ee;
+  --primario: #2f6fed;
+  --primario-oscuro: #2257c4;
+  --exito: #1f9d55;
+  --peligro: #d64545;
+  --radio: 12px;
+  --sombra: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.5;
+}
+
+code {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.9em;
+  background: #eef1f7;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* --- Barra superior --- */
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--tarjeta);
+  border-bottom: 1px solid var(--borde);
+}
+.marca { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 1.05rem; }
+.logo {
+  width: 22px; height: 22px; border-radius: 6px;
+  border: 3px solid var(--primario);
+  box-shadow: inset 0 0 0 3px var(--tarjeta), inset 0 0 0 8px var(--primario);
+}
+.barra nav a {
+  color: var(--suave);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+.barra nav a.activo, .barra nav a:hover { color: var(--primario); background: #eaf0fd; }
+
+/* --- Distribución --- */
+.contenedor { max-width: 1180px; margin: 24px auto; padding: 0 16px; }
+.rejilla { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; }
+@media (max-width: 900px) { .rejilla { grid-template-columns: 1fr; } }
+
+.tarjeta {
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 18px 20px;
+}
+h1 { font-size: 1.15rem; margin: 0; }
+h2 { font-size: 0.95rem; margin: 0 0 10px; color: var(--suave); text-transform: uppercase; letter-spacing: 0.04em; }
+.panel h2:not(:first-child) { margin-top: 22px; }
+
+/* --- Video --- */
+.video-cabecera { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.pantalla {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: #0f1420;
+  border-radius: 10px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.pantalla img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.aviso { color: #c4cad6; text-align: center; padding: 24px; max-width: 360px; }
+.aviso strong { color: #fff; }
+
+.indicador {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.indicador::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.indicador.encendido { color: var(--exito); background: #e3f5ea; }
+.indicador.encendido::before { animation: latido 1.2s infinite; }
+.indicador.apagado { color: var(--suave); background: #edf0f5; }
+@keyframes latido { 50% { opacity: 0.3; } }
+
+/* --- Botones --- */
+.controles { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.boton {
+  font: inherit;
+  font-weight: 500;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--borde);
+  background: var(--tarjeta);
+  color: var(--texto);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+.boton:hover { border-color: #c5ccd9; background: #f7f9fc; }
+.boton.primario { background: var(--primario); border-color: var(--primario); color: #fff; }
+.boton.primario:hover { background: var(--primario-oscuro); }
+.boton:disabled, .boton[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+/* --- Panel de estado --- */
+.datos { margin: 0; display: grid; gap: 2px; }
+.datos div {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--borde);
+}
+.datos dt { color: var(--suave); }
+.datos dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.error {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fdecec;
+  color: var(--peligro);
+  font-size: 0.9rem;
+}
+.pasos { margin: 0; padding-left: 20px; color: var(--suave); font-size: 0.92rem; }
+.pasos li { margin-bottom: 6px; }
+
+.pie { text-align: center; color: var(--suave); font-size: 0.85rem; padding: 24px 0 32px; }

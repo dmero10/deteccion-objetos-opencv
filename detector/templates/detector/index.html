@@ -1,0 +1,59 @@
+{% extends "detector/base.html" %}
+{% load static %}
+
+{% block titulo %}En vivo · Detector de objetos{% endblock %}
+
+{% block contenido %}
+<div class="rejilla">
+  <section class="tarjeta video">
+    <div class="video-cabecera">
+      <h1>Cámara en vivo</h1>
+      <span id="indicador" class="indicador apagado">Apagada</span>
+    </div>
+
+    <div class="pantalla">
+      <img id="video" alt="Transmisión de la cámara" hidden>
+      <div id="aviso" class="aviso">
+        <p id="aviso-texto">La cámara está apagada. Presiona <strong>Iniciar</strong> para ver el video.</p>
+      </div>
+    </div>
+
+    <div class="controles">
+      <button id="btn-iniciar" class="boton primario" type="button">Iniciar</button>
+      <button id="btn-detener" class="boton" type="button" disabled>Detener</button>
+      <a id="btn-foto" class="boton" href="{% url 'detector:foto' %}" aria-disabled="true">Capturar foto</a>
+    </div>
+  </section>
+
+  <aside class="tarjeta panel">
+    <h2>Estado</h2>
+    <dl class="datos">
+      <div><dt>Cámara</dt><dd id="dato-estado">Apagada</dd></div>
+      <div><dt>FPS</dt><dd id="dato-fps">0</dd></div>
+      <div><dt>Resolución</dt><dd id="dato-resolucion">-</dd></div>
+      <div><dt>Índice</dt><dd id="dato-indice">{{ estado.indice }}</dd></div>
+      <div><dt>Espectadores</dt><dd id="dato-clientes">0</dd></div>
+    </dl>
+    <p id="error" class="error" hidden></p>
+
+    <h2>Cómo funciona</h2>
+    <ol class="pasos">
+      <li>Django abre la cámara con <code>cv2.VideoCapture</code>.</li>
+      <li>OpenCV procesa cada frame y lo codifica en JPEG.</li>
+      <li>El servidor envía los frames como flujo MJPEG al navegador.</li>
+    </ol>
+  </aside>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.RUTAS = {
+    video: "{% url 'detector:video_feed' %}",
+    estado: "{% url 'detector:api_estado' %}",
+    iniciar: "{% url 'detector:api_iniciar' %}",
+    detener: "{% url 'detector:api_detener' %}",
+  };
+</script>
+<script src="{% static 'detector/app.js' %}"></script>
+{% endblock %}
