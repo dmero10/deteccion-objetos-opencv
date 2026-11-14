@@ -1,0 +1,7 @@
+# Los .bat necesitan saltos de línea de Windows (CRLF) para funcionar bien en cmd
+*.bat text eol=crlf
+*.sh  text eol=lf
+
+# Archivos binarios
+*.onnx binary
+*.jpg  binary

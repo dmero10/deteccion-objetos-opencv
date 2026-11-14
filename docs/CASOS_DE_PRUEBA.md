@@ -4,11 +4,11 @@ El sistema se probó en tres niveles:
 
 | Nivel | Qué prueba | Cómo se ejecuta | Resultado |
 |---|---|---|---|
-| 1. Automatizadas | Cada módulo por separado, con cámara y detector simulados (y el modelo real sobre una imagen de referencia) | `python manage.py test` | **68 / 68 pasan** |
+| 1. Automatizadas | Cada módulo por separado, con cámara y detector simulados (y el modelo real sobre una imagen de referencia) | `python manage.py test` | **72 / 72 pasan** |
 | 2. Funcionales | El sistema completo en funcionamiento: servidor, cámara real, YOLO11n y PostgreSQL | `python scripts/prueba_funcional.py` | **15 / 15 pasan** ([detalle](resultado_pruebas.md)) |
 | 3. Interfaz | Diseño, temas claro/oscuro y pantallas de celular | Revisión visual en el navegador | Ver tabla 3 |
 
-Entorno de ejecución: Windows 11, Python 3.11, Django 5.2, OpenCV 4.14, PostgreSQL 17,
+Entorno de ejecución: Windows 11, Python 3.11 (también verificado con 3.13), Django 5.2, OpenCV 4.14, PostgreSQL 17,
 cámara web integrada (640×480), CPU sin GPU.
 
 ---
@@ -25,6 +25,7 @@ persona y dos tazas). Las de `ModeloRealTests` sí ejecutan YOLO11n con OpenCV.
 | `test_yolo.py` | 16 | Decodificación de la salida de YOLO, letterbox, NMS por clase, dibujo de cajas, 80 clases y categorías, **modelo real sobre `bus.jpg`** |
 | `test_registro.py` | 11 | Guardado en PostgreSQL con recorte JPEG, intervalo por clase, "nuevo hallazgo", errores de base de datos |
 | `test_vistas.py` | 27 | Páginas, API, objetos, historial (filtros, paginación, CSV, borrar), análisis de imágenes y validación de archivos |
+| `test_preparar_bd.py` | 4 | Creación automática de la base de datos que usa `iniciar.bat`: la crea si falta, no la duplica, contraseña incorrecta y PostgreSQL apagado |
 
 Casos representativos:
 

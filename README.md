@@ -8,6 +8,30 @@ video y guarda cada avistamiento en **PostgreSQL**. La interfaz web está hecha 
 
 **Integrantes:** _(escribir nombres del grupo)_
 
+## Inicio rápido (Windows)
+
+1. Descarga el proyecto: botón verde **Code → Download ZIP** (y descomprímelo) o
+   `git clone https://github.com/dmero10/deteccion-objetos-opencv.git`
+2. Entra a la carpeta y haz **doble clic en `iniciar.bat`**.
+3. La primera vez te pedirá la **contraseña de PostgreSQL**. Si no tienes PostgreSQL,
+   ofrece instalarlo y te pide elegir una. Si no tienes Python, también ofrece instalarlo.
+4. Espera a que se abra el navegador (la primera vez tarda 2-3 minutos) y presiona
+   **Encender cámara**.
+
+Las siguientes veces, el mismo doble clic arranca todo en segundos. Para detenerlo,
+presiona `Ctrl + C` en la ventana negra o ciérrala.
+
+`iniciar.bat` hace solo lo que harías a mano: crea el entorno virtual `venv`, instala
+`requirements.txt`, crea el `.env`, crea la base de datos `deteccion_objetos`, aplica las
+migraciones y arranca el servidor (si el puerto 8000 está ocupado, usa el siguiente libre).
+En Linux o macOS: `./iniciar.sh` (con Python 3.10+ y PostgreSQL ya instalados).
+
+| Si pasa esto | Haz esto |
+|---|---|
+| Escribiste mal la contraseña de PostgreSQL | Te la vuelve a pedir; o ejecuta `iniciar.bat --reconfigurar` |
+| "No se pudo abrir la cámara" | Cierra Zoom, Teams, Meet o la app Cámara y vuelve a encenderla |
+| Windows SmartScreen bloquea el `.bat` | **Más información → Ejecutar de todas formas** |
+
 ## Qué hace
 
 | Página | Para qué sirve |
@@ -63,7 +87,7 @@ confianza al detectar una persona subió de 57–77 % (YOLOv4-tiny) a 84–94 %.
   objeto por primera vez.
 - **Analizar imagen**: subida con arrastrar y soltar, validación de tipo y tamaño.
 - **Pruebas en tres niveles** (detalle en [docs/CASOS_DE_PRUEBA.md](docs/CASOS_DE_PRUEBA.md)):
-  - 68 pruebas automatizadas (`python manage.py test`): **68 / 68 pasan**.
+  - 72 pruebas automatizadas (`python manage.py test`): **72 / 72 pasan**.
   - 15 pruebas funcionales del sistema en funcionamiento con cámara real y PostgreSQL
     (`python scripts/prueba_funcional.py`): **15 / 15 pasan**
     ([informe](docs/resultado_pruebas.md)).
@@ -93,7 +117,7 @@ docs/
   resultado_pruebas.md      Informe generado por prueba_funcional.py
 ```
 
-## Instalación
+## Instalación manual (alternativa a `iniciar.bat`)
 
 Requisitos: Python 3.10+, PostgreSQL 14+ y una cámara web.
 
@@ -110,13 +134,9 @@ pip install -r requirements.txt
 
 ### Base de datos
 
-Crea la base en PostgreSQL (desde pgAdmin o `psql`):
-
-```sql
-CREATE DATABASE deteccion_objetos;
-```
-
-Copia `.env.example` como `.env` y escribe tu usuario y contraseña de PostgreSQL.
+Copia `.env.example` como `.env` y escribe tu usuario y contraseña de PostgreSQL. Luego crea
+la base con `python manage.py preparar_bd` (o a mano en pgAdmin:
+`CREATE DATABASE deteccion_objetos;`).
 
 ### Ejecutar
 
@@ -133,7 +153,7 @@ Opcional, para ver el historial desde el panel de administración de Django:
 ## Pruebas
 
 ```bash
-python manage.py test                     # 68 pruebas automatizadas (no necesitan cámara)
+python manage.py test                     # 72 pruebas automatizadas (no necesitan cámara)
 python scripts/prueba_funcional.py        # con el servidor corriendo y la cámara libre
 python scripts/prueba_funcional.py --informe docs/resultado_pruebas.md
 ```
