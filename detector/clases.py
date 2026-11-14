@@ -87,3 +87,26 @@ CLASES = [
 ]
 
 assert len(CLASES) == 80, "COCO tiene exactamente 80 clases"
+
+# Supercategorías oficiales de COCO: (nombre, primer índice, último índice)
+CATEGORIAS = [
+    ("Personas", 0, 0),
+    ("Vehículos", 1, 8),
+    ("En la calle", 9, 13),
+    ("Animales", 14, 23),
+    ("Accesorios", 24, 28),
+    ("Deportes", 29, 38),
+    ("Cocina", 39, 45),
+    ("Comida", 46, 55),
+    ("Muebles", 56, 61),
+    ("Electrónica", 62, 67),
+    ("Electrodomésticos", 68, 72),
+    ("Hogar", 73, 79),
+]
+
+
+def categoria_de(clase_id):
+    for nombre, inicio, fin in CATEGORIAS:
+        if inicio <= clase_id <= fin:
+            return nombre
+    return "Otros"

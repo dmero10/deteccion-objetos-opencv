@@ -120,3 +120,11 @@ DETECTOR_ACTIVO = os.environ.get("DETECTOR_ACTIVO", "1") == "1"
 DETECTOR_CONFIANZA = float(os.environ.get("DETECTOR_CONFIANZA", "0.45"))
 # Umbral de NMS para eliminar cajas repetidas sobre el mismo objeto
 DETECTOR_NMS = float(os.environ.get("DETECTOR_NMS", "0.45"))
+
+# --- Bitácora de avistamientos (PostgreSQL) ---
+# Guardar automáticamente los objetos detectados (1/0)
+DETECTOR_REGISTRAR = os.environ.get("DETECTOR_REGISTRAR", "1") == "1"
+# Segundos mínimos entre dos registros de la misma clase de objeto
+DETECTOR_INTERVALO_REGISTRO = float(os.environ.get("DETECTOR_INTERVALO_REGISTRO", "15"))
+# Tamaño máximo de una imagen subida en "Analizar imagen" (MB)
+ANALIZAR_MAX_MB = float(os.environ.get("ANALIZAR_MAX_MB", "8"))

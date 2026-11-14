@@ -1,0 +1,104 @@
+{% extends "detector/base.html" %}
+
+{% block titulo %}Analizar imagen{% endblock %}
+{% block clase_pagina %}analizar{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+  <p class="ceja">04 — Analizar imagen</p>
+  <h1>¿Tienes una foto? <em>Lince la revisa.</em></h1>
+  <p class="bajada">Mismo detector que el video (YOLO11n con <code>cv2.dnn</code>), aplicado a una imagen tuya. La imagen no se guarda en ningún lado.</p>
+</div>
+
+<div class="analisis">
+  <form class="tarjeta formulario-analisis" method="post" enctype="multipart/form-data" action="{% url 'detector:analizar' %}">
+    {% csrf_token %}
+    <label class="soltar" id="soltar">
+      <input type="file" name="imagen" id="archivo" accept="image/*" required>
+      <img id="vista-previa" alt="" hidden>
+      <span class="soltar-texto" id="soltar-texto">
+        <strong>Arrastra una foto aquí</strong>
+        <span>o haz clic para elegirla · JPG, PNG, BMP o WEBP · hasta {{ max_mb|floatformat:"0" }} MB</span>
+      </span>
+    </label>
+
+    <label class="regla" for="an-confianza">
+      <span class="regla-etiqueta">Confianza mínima <output id="an-confianza-valor">{{ confianza }}%</output></span>
+      <input id="an-confianza" name="confianza" type="range" min="5" max="95" step="5" value="{{ confianza }}">
+      <span class="regla-extremos" aria-hidden="true"><span>5% · ve más</span><span>95% · solo lo seguro</span></span>
+    </label>
+
+    <button class="boton boton-primario boton-ancho" type="submit" id="btn-analizar">Analizar imagen</button>
+    {% if error %}<p class="alerta" role="alert">{{ error }}</p>{% endif %}
+  </form>
+
+  <section class="resultado" aria-live="polite" aria-label="Resultado">
+    {% if resultado %}
+    <figure class="impresion">
+      <img src="{{ resultado.imagen }}" alt="Imagen analizada con {{ resultado.total }} objeto(s) marcados">
+      <figcaption>
+        <span>{{ resultado.nombre_archivo }}</span>
+        <span>{{ resultado.dimensiones }} px · {{ resultado.ms }} ms</span>
+      </figcaption>
+    </figure>
+    <div class="tarjeta">
+      <h2 class="titulo-seccion">{{ resultado.total }} objeto{{ resultado.total|pluralize }} encontrado{{ resultado.total|pluralize }}</h2>
+      {% if resultado.detecciones %}
+      <ul class="escena">
+        {% for d in resultado.detecciones %}
+        <li class="escena-item">
+          <span class="chip" style="background: {{ d.color }}"></span>
+          <span class="escena-nombre">{{ d.nombre }}</span>
+          <span class="escena-cantidad">{{ d.caja.2 }}×{{ d.caja.3 }}</span>
+          <span class="medidor"><span style="width: {{ d.porcentaje }}%"></span></span>
+          <span class="escena-pct">{{ d.porcentaje }}%</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="escena-vacia">No se encontró nada con esa confianza. Prueba a bajarla.</p>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="resultado-vacio">
+      <p class="vacio-titulo">El resultado aparecerá aquí.</p>
+      <p>Sugerencia: una foto de tu escritorio, la calle o la cocina suele traer varios objetos de golpe.</p>
+    </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  const zona = document.getElementById("soltar");
+  const archivo = document.getElementById("archivo");
+  const previa = document.getElementById("vista-previa");
+  const texto = document.getElementById("soltar-texto");
+  const regla = document.getElementById("an-confianza");
+  const valor = document.getElementById("an-confianza-valor");
+  const boton = document.getElementById("btn-analizar");
+
+  regla.addEventListener("input", () => { valor.textContent = regla.value + "%"; });
+
+  function mostrar() {
+    const f = archivo.files[0];
+    if (!f) return;
+    previa.src = URL.createObjectURL(f);
+    previa.hidden = false;
+    zona.classList.add("con-archivo");
+    texto.querySelector("strong").textContent = f.name;
+    texto.querySelector("span").textContent = (f.size / 1048576).toFixed(1) + " MB · haz clic para cambiarla";
+  }
+  archivo.addEventListener("change", mostrar);
+
+  ["dragenter", "dragover"].forEach((t) => zona.addEventListener(t, (e) => { e.preventDefault(); zona.classList.add("arrastrando"); }));
+  ["dragleave", "drop"].forEach((t) => zona.addEventListener(t, (e) => { e.preventDefault(); zona.classList.remove("arrastrando"); }));
+  zona.addEventListener("drop", (e) => {
+    if (e.dataTransfer.files.length) { archivo.files = e.dataTransfer.files; mostrar(); }
+  });
+  boton.form.addEventListener("submit", () => { boton.disabled = true; boton.textContent = "Analizando…"; });
+})();
+</script>
+{% endblock %}

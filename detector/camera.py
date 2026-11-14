@@ -13,14 +13,20 @@ Funcionamiento (dos hilos):
   * Si nadie mira el video durante CAMERA_APAGADO_INACTIVO segundos, la
     cámara se libera sola.
 """
+import logging
 import platform
 import threading
 import time
 
 import cv2
 from django.conf import settings
+from django.db import connection
 
+from .clases import CLASES
+from .registro import Registrador
 from .yolo import ModeloNoEncontrado, dibujar_detecciones, obtener_detector, resumir
+
+log = logging.getLogger(__name__)
 
 
 def _media_movil(anterior, nuevo):
@@ -31,7 +37,8 @@ class Camara:
     """Fuente de video compartida (patrón singleton, ver `camara` al final)."""
 
     def __init__(self, indice, ancho, alto, espejo=True, calidad=80, apagado_inactivo=15.0,
-                 deteccion_activa=True, confianza=0.45):
+                 deteccion_activa=True, confianza=0.45, registrador=None):
+        self.registrador = registrador  # guarda avistamientos en la BD (registro.py)
         self.indice = indice
         self.ancho = ancho
         self.alto = alto
@@ -162,8 +169,10 @@ class Camara:
         return time.monotonic() - self._sin_clientes_desde > self.apagado_inactivo
 
     # ------------------------------------------------------------ detección
-    def configurar_deteccion(self, activa=None, confianza=None):
-        """Cambia la detección en vivo, sin reiniciar el video."""
+    def configurar_deteccion(self, activa=None, confianza=None, registrar=None):
+        """Cambia la detección (y si se guarda en la bitácora) en vivo, sin reiniciar el video."""
+        if registrar is not None and self.registrador is not None:
+            self.registrador.activo = bool(registrar)
         if confianza is not None:
             self.confianza = min(max(float(confianza), 0.05), 0.95)
         if activa is not None:
@@ -191,18 +200,26 @@ class Camara:
     def _bucle_deteccion(self):
         """Analiza siempre el frame más reciente; los intermedios se descartan."""
         anterior = None
-        while self._activa:
-            if not self._hay_pendiente.wait(timeout=0.5):
-                continue
-            self._hay_pendiente.clear()
-            frame, self._pendiente = self._pendiente, None
-            if frame is None or not self._activa:
-                continue
-            if self._detectar(frame):
-                ahora = time.perf_counter()
-                if anterior is not None:
-                    self.fps_deteccion = _media_movil(self.fps_deteccion, 1.0 / max(ahora - anterior, 1e-6))
-                anterior = ahora
+        try:
+            while self._activa:
+                if not self._hay_pendiente.wait(timeout=0.5):
+                    continue
+                self._hay_pendiente.clear()
+                frame, self._pendiente = self._pendiente, None
+                if frame is None or not self._activa:
+                    continue
+                try:
+                    detectado = self._detectar(frame)
+                except Exception:  # un fallo puntual no debe matar el hilo
+                    log.exception("Error en la detección")
+                    continue
+                if detectado:
+                    ahora = time.perf_counter()
+                    if anterior is not None:
+                        self.fps_deteccion = _media_movil(self.fps_deteccion, 1.0 / max(ahora - anterior, 1e-6))
+                    anterior = ahora
+        finally:
+            connection.close()  # cada hilo tiene su propia conexión a PostgreSQL
 
     def _detectar(self, frame):
         """Ejecuta YOLO sobre un frame y publica los resultados. Devuelve True si se ejecutó."""
@@ -216,6 +233,8 @@ class Camara:
         self.inferencia_ms = _media_movil(self.inferencia_ms, (time.perf_counter() - inicio) * 1000)
         self._detecciones = detecciones
         self._resumen = resumir(detecciones)
+        if self.registrador is not None:
+            self.registrador.registrar(frame, detecciones)
         return True
 
     # -------------------------------------------------------- procesamiento
@@ -294,6 +313,22 @@ class Camara:
                 "objetos": self._resumen if detectando else [],
                 "error": self.detector_error,
             },
+            "registro": self._estado_registro(),
+        }
+
+    def _estado_registro(self):
+        r = self.registrador
+        if r is None:
+            return {"disponible": False, "activo": False, "recientes": [], "descubiertas": 0,
+                    "total_clases": len(CLASES), "error": ""}
+        return {
+            "disponible": True,
+            "activo": r.activo,
+            "intervalo": r.intervalo,
+            "recientes": r.recientes(),
+            "descubiertas": len(r.descubiertas()),
+            "total_clases": len(CLASES),
+            "error": r.error,
         }
 
 
@@ -306,4 +341,8 @@ camara = Camara(
     apagado_inactivo=settings.CAMERA_APAGADO_INACTIVO,
     deteccion_activa=settings.DETECTOR_ACTIVO,
     confianza=settings.DETECTOR_CONFIANZA,
+    registrador=Registrador(
+        intervalo=settings.DETECTOR_INTERVALO_REGISTRO,
+        activo=settings.DETECTOR_REGISTRAR,
+    ),
 )

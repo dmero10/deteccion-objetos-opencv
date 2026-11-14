@@ -1,0 +1,60 @@
+{% extends "detector/base.html" %}
+{% load lince %}
+
+{% block titulo %}Álbum{% endblock %}
+{% block clase_pagina %}album{% endblock %}
+
+{% block contenido %}
+<div class="encabezado encabezado-album">
+  <div>
+    <p class="ceja">02 — Álbum de hallazgos</p>
+    <h1>Ochenta láminas, <em>una por cada cosa que Lince sabe ver.</em></h1>
+    <p class="bajada">Cada lámina se completa la primera vez que la cámara reconoce ese objeto. La foto es el recorte con mayor confianza guardado en la bitácora.</p>
+  </div>
+  <div class="progreso-album" aria-label="{{ descubiertas }} de {{ total_clases }} objetos descubiertos">
+    <p class="progreso-cifra">{{ descubiertas }}<span>/{{ total_clases }}</span></p>
+    <p class="progreso-texto">descubiertos · {{ porcentaje }}%</p>
+  </div>
+</div>
+
+<div class="marcas-80" aria-hidden="true">
+  {% for marcada in marcas %}<span class="{% if marcada %}marcada{% endif %}"></span>{% endfor %}
+</div>
+
+<nav class="indice-categorias" aria-label="Categorías">
+  {% for s in secciones %}
+  <a href="#cat-{{ forloop.counter }}" class="{% if s.descubiertas %}con-hallazgos{% endif %}">{{ s.nombre }} <span>{{ s.descubiertas }}/{{ s.casillas|length }}</span></a>
+  {% endfor %}
+</nav>
+
+{% for s in secciones %}
+<section class="categoria" id="cat-{{ forloop.counter }}" aria-labelledby="titulo-cat-{{ forloop.counter }}">
+  <header class="categoria-cabecera">
+    <h2 id="titulo-cat-{{ forloop.counter }}">{{ s.nombre }}</h2>
+    <span class="categoria-cuenta">{{ s.descubiertas }} / {{ s.casillas|length }}</span>
+  </header>
+  <ul class="laminas">
+    {% for c in s.casillas %}
+    {% if c.descubierta %}
+    <li class="lamina">
+      <a href="{% url 'detector:album_clase' c.clase %}" title="Ver los avistamientos de {{ c.nombre }} en la bitácora">
+        <span class="lamina-num"><span class="chip" style="background: {{ c.color }}"></span>Nº {{ c.numero }}</span>
+        <img src="{% url 'detector:imagen_avistamiento' c.datos.foto %}" alt="Mejor captura de {{ c.nombre }}" loading="lazy">
+        <span class="lamina-nombre">{{ c.nombre }}</span>
+        <span class="lamina-meta">×{{ c.datos.total }} · máx {{ c.datos.mejor|porcentaje }}</span>
+        <span class="lamina-fecha">desde el {{ c.datos.primera|date:"j b · H:i" }}</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="lamina lamina-oculta">
+      <span class="lamina-num">Nº {{ c.numero }}</span>
+      <span class="lamina-hueco" aria-hidden="true">{{ c.numero }}</span>
+      <span class="lamina-nombre">{{ c.nombre }}</span>
+      <span class="lamina-meta">sin descubrir</span>
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+</section>
+{% endfor %}
+{% endblock %}
