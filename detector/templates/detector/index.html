@@ -1,123 +1,92 @@
 {% extends "detector/base.html" %}
 {% load static %}
 
-{% block titulo %}Observatorio{% endblock %}
+{% block titulo %}En vivo{% endblock %}
 {% block clase_pagina %}observatorio{% endblock %}
 
 {% block contenido %}
-<div class="encabezado">
-  <p class="ceja">01 — Observatorio</p>
-  <h1>Lo que la cámara ve, <em>ahora mismo.</em></h1>
-  <p class="bajada">OpenCV captura el video, YOLO11n reconoce 80 tipos de objetos y cada hallazgo queda anotado en la bitácora.</p>
+<div class="titulo-pagina">
+  <h1>Detección en vivo</h1>
+  <p>Enciende la cámara y el sistema marcará los objetos que reconozca.</p>
 </div>
 
-<div class="observatorio">
-  <section class="columna-visor" aria-label="Video en vivo">
-    <div class="visor" id="visor" data-estado="apagada">
-      <div class="visor-barra">
-        <span>CAM {{ estado.indice }}</span>
-        <span id="visor-resolucion">— × —</span>
-        <span class="visor-rec"><span class="rec-luz" aria-hidden="true"></span><span id="visor-rec-texto">Lente cerrada</span></span>
-      </div>
-      <div class="visor-pantalla">
-        <span class="esquina e1" aria-hidden="true"></span><span class="esquina e2" aria-hidden="true"></span>
-        <span class="esquina e3" aria-hidden="true"></span><span class="esquina e4" aria-hidden="true"></span>
-        <img id="video" alt="Transmisión en vivo de la cámara con los objetos detectados" hidden>
-        <div class="visor-reposo" id="reposo">
-          <p class="reposo-titulo" id="reposo-titulo">La lente está cerrada.</p>
-          <p class="reposo-texto" id="reposo-texto">Enciende la cámara para empezar a observar.</p>
-        </div>
+<div class="rejilla-vivo">
+  <section class="tarjeta" aria-label="Video en vivo">
+    <div class="tarjeta-cabecera">
+      <h2>Cámara</h2>
+      <span class="etiqueta" id="indicador" data-estado="apagada">Apagada</span>
+    </div>
+    <div class="pantalla">
+      <img id="video" alt="Video en vivo de la cámara con los objetos detectados" hidden>
+      <div class="pantalla-vacia" id="reposo">
+        <p id="reposo-titulo">La cámara está apagada</p>
+        <p id="reposo-texto">Presiona «Encender cámara» para empezar.</p>
       </div>
     </div>
-
-    <div class="mandos">
-      <button id="btn-camara" class="boton boton-primario" type="button">
-        <span class="boton-icono" aria-hidden="true">●</span><span id="btn-camara-texto">Encender cámara</span>
-      </button>
+    <div class="acciones">
+      <button id="btn-camara" class="boton boton-primario" type="button">Encender cámara</button>
       <a id="btn-foto" class="boton" href="{% url 'detector:foto' %}" aria-disabled="true">Capturar foto</a>
-      <p class="atajos" aria-label="Atajos de teclado">
-        <kbd>Espacio</kbd> cámara <kbd>D</kbd> detección <kbd>G</kbd> guardar <kbd>F</kbd> foto
-      </p>
+      <span class="texto-suave">Atajos: Espacio cámara · D detección · F foto</span>
     </div>
     <p id="error" class="alerta" role="alert" hidden></p>
-
-    <section class="pelicula" aria-labelledby="titulo-pelicula">
-      <div class="pelicula-cabecera">
-        <h2 id="titulo-pelicula" class="titulo-seccion">Últimos avistamientos</h2>
-        <a class="enlace" href="{% url 'detector:bitacora' %}">Ver la bitácora →</a>
-      </div>
-      <div class="pelicula-cinta">
-        <ol id="cinta" class="cinta" aria-live="polite">
-          <li class="cinta-vacia">Aún no hay avistamientos. Cuando la cámara reconozca algo, quedará revelado aquí.</li>
-        </ol>
-      </div>
-    </section>
   </section>
 
-  <aside class="columna-panel" aria-label="Panel de detección">
+  <aside class="panel" aria-label="Panel de detección">
     <section class="tarjeta">
-      <h2 class="titulo-seccion">Lecturas</h2>
-      <dl class="lecturas">
+      <h2>Estado</h2>
+      <dl class="datos">
         <div><dt>Video</dt><dd><span id="lec-fps">0</span><small>fps</small></dd></div>
-        <div><dt>Detección</dt><dd><span id="lec-det">0</span><small>/s</small></dd></div>
-        <div><dt>Inferencia</dt><dd><span id="lec-ms">—</span><small>ms</small></dd></div>
-        <div><dt>En escena</dt><dd><span id="lec-total">0</span><small>obj</small></dd></div>
+        <div><dt>Detecciones</dt><dd><span id="lec-det">0</span><small>/s</small></dd></div>
+        <div><dt>Inferencia</dt><dd><span id="lec-ms">-</span><small>ms</small></dd></div>
+        <div><dt>Objetos</dt><dd><span id="lec-total">0</span></dd></div>
       </dl>
-      <p class="nota-modelo">Modelo <code id="lec-modelo">{{ estado.deteccion.modelo }}</code> · <span id="lec-espectadores">0</span> espectador(es)</p>
+      <p class="texto-suave">Modelo <code id="lec-modelo">{{ estado.deteccion.modelo }}</code> · Resolución <span id="lec-resolucion">-</span> · <span id="lec-espectadores">0</span> espectador(es)</p>
     </section>
 
     <section class="tarjeta">
-      <h2 class="titulo-seccion">En escena</h2>
-      <ul id="escena" class="escena">
-        <li class="escena-vacia">Nada a la vista.</li>
-      </ul>
+      <h2>Objetos en pantalla</h2>
+      <ul id="escena" class="lista-objetos"><li class="vacio">La cámara está apagada.</li></ul>
       <p id="det-error" class="alerta" role="alert" hidden></p>
     </section>
 
     <section class="tarjeta">
-      <h2 class="titulo-seccion">Ajustes</h2>
+      <h2>Ajustes</h2>
       <label class="interruptor">
         <input id="aj-deteccion" type="checkbox" {% if estado.deteccion.activa %}checked{% endif %}>
         <span class="riel" aria-hidden="true"></span>
-        <span class="interruptor-texto"><strong>Detectar objetos</strong><small>Dibuja cajas sobre el video</small></span>
+        <span>Detectar objetos</span>
       </label>
       <label class="interruptor">
         <input id="aj-registro" type="checkbox" {% if estado.registro.activo %}checked{% endif %}>
         <span class="riel" aria-hidden="true"></span>
-        <span class="interruptor-texto"><strong>Guardar en bitácora</strong><small>Un registro por objeto cada {{ estado.registro.intervalo|floatformat:"0" }} s</small></span>
+        <span>Guardar en el historial</span>
       </label>
-      <label class="regla" for="aj-confianza">
-        <span class="regla-etiqueta">Confianza mínima <output id="aj-confianza-valor">{% widthratio estado.deteccion.confianza 1 100 %}%</output></span>
+      <label class="deslizador" for="aj-confianza">
+        <span>Confianza mínima <output id="aj-confianza-valor">{% widthratio estado.deteccion.confianza 1 100 %}%</output></span>
         <input id="aj-confianza" type="range" min="5" max="95" step="5" value="{% widthratio estado.deteccion.confianza 1 100 %}">
-        <span class="regla-extremos" aria-hidden="true"><span>5% · ve más</span><span>95% · solo lo seguro</span></span>
       </label>
     </section>
 
-    <a class="tarjeta tarjeta-album" href="{% url 'detector:album' %}">
-      <h2 class="titulo-seccion">Álbum de hallazgos</h2>
-      <p class="album-mini-cifra"><span id="alb-descubiertas">{{ estado.registro.descubiertas }}</span><span class="de">/ {{ estado.registro.total_clases }}</span></p>
-      <div class="barra-80" aria-hidden="true"><span id="alb-barra" style="width: {% widthratio estado.registro.descubiertas estado.registro.total_clases 100 %}%"></span></div>
-      <p class="album-mini-texto">objetos descubiertos · <span class="enlace">Abrir álbum →</span></p>
-    </a>
-
-    <details class="tarjeta como-funciona">
-      <summary class="titulo-seccion">¿Cómo funciona?</summary>
-      <ol>
-        <li><code>cv2.VideoCapture</code> lee la cámara en un hilo.</li>
-        <li>Otro hilo pasa el frame más reciente a YOLO11n con <code>cv2.dnn</code> (letterbox 640×640, <code>blobFromImage</code>, NMS por clase).</li>
-        <li><code>cv2.rectangle</code> y <code>cv2.putText</code> dibujan los resultados sobre el video.</li>
-        <li>Los avistamientos se guardan en PostgreSQL con su recorte en JPEG.</li>
-        <li>Django envía el video al navegador como flujo MJPEG.</li>
-      </ol>
-    </details>
+    <section class="tarjeta">
+      <h2>Objetos descubiertos</h2>
+      <p><strong id="alb-descubiertas">{{ estado.registro.descubiertas }}</strong> de {{ estado.registro.total_clases }}</p>
+      <div class="progreso"><span id="alb-barra" style="width: {% widthratio estado.registro.descubiertas estado.registro.total_clases 100 %}%"></span></div>
+      <a href="{% url 'detector:album' %}">Ver todos los objetos</a>
+    </section>
   </aside>
 </div>
 
-<div class="sello" id="sello" role="status" aria-live="assertive" hidden>
-  <p class="sello-ceja">¡Nuevo hallazgo!</p>
-  <p class="sello-nombre" id="sello-nombre"></p>
-  <p class="sello-pie" id="sello-pie"></p>
-</div>
+<section class="tarjeta" style="margin-top: 20px" aria-labelledby="titulo-ultimas">
+  <div class="ultimas-cabecera">
+    <h2 id="titulo-ultimas">Últimas detecciones guardadas</h2>
+    <a href="{% url 'detector:bitacora' %}">Ver historial</a>
+  </div>
+  <ul id="ultimas" class="ultimas" aria-live="polite">
+    <li class="vacio texto-suave">Todavía no hay detecciones guardadas.</li>
+  </ul>
+</section>
+
+<div class="notificacion" id="notificacion" role="status" aria-live="polite" hidden></div>
 {% endblock %}
 
 {% block scripts %}

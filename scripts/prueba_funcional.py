@@ -14,6 +14,7 @@ Solo usa la librería estándar de Python.
 import argparse
 import http.cookiejar
 import json
+import re
 import sys
 import time
 import urllib.error
@@ -113,21 +114,21 @@ def casos(c, con_camara):
 
     def cf01():
         s, _, html = c.get("/")
-        verificar(s == 200 and "Observatorio".encode() in html, f"HTTP {s}")
-        return "HTTP 200 · página del Observatorio"
+        verificar(s == 200 and "Detección en vivo".encode() in html, f"HTTP {s}")
+        return "HTTP 200 · página En vivo"
     yield "CF-01", "La página principal carga", cf01
 
     def cf02():
         estados = {r: c.get(r)[0] for r in ("/album/", "/bitacora/", "/analizar/", "/admin/login/")}
         verificar(all(v == 200 for v in estados.values()), str(estados))
-        return "Álbum, Bitácora, Analizar y Admin: HTTP 200"
+        return "Objetos, Historial, Analizar y Admin: HTTP 200"
     yield "CF-02", "Las demás páginas cargan", cf02
 
     def cf03():
         e = c.estado()
         for clave in ("activa", "fps", "deteccion", "registro"):
             verificar(clave in e, f"falta '{clave}'")
-        return f"modelo {e['deteccion']['modelo']} · álbum {e['registro']['descubiertas']}/80"
+        return f"modelo {e['deteccion']['modelo']} · objetos descubiertos {e['registro']['descubiertas']}/80"
     yield "CF-03", "La API de estado responde JSON válido", cf03
 
     if con_camara:
@@ -180,7 +181,7 @@ def casos(c, con_camara):
         def cf10():
             e = c.estado()
             if not e["registro"]["activo"]:
-                raise Omitido("el guardado en bitácora está desactivado")
+                raise Omitido("el guardado en el historial está desactivado")
             e = c.esperar(lambda e: e["registro"]["recientes"], 8)
             recientes = e["registro"]["recientes"]
             if not recientes:
@@ -189,12 +190,12 @@ def casos(c, con_camara):
             s, h, img = c.get(a["imagen"])
             verificar(s == 200 and img[:2] == b"\xff\xd8", "el recorte no es un JPEG")
             return f"#{a['id']} {a['nombre']} {a['confianza']:.0%} guardado con recorte en PostgreSQL"
-        yield "CF-10", "Los avistamientos se guardan en la bitácora", cf10
+        yield "CF-10", "Las detecciones se guardan en el historial", cf10
 
     def cf11():
         s, _, html = c.post_archivo("/analizar/", "bus.jpg", IMAGEN_BUS.read_bytes(), {"confianza": "45"})
-        texto = html.decode("utf-8", "replace")
-        personas, bus = texto.count('escena-nombre">persona'), texto.count('escena-nombre">bus')
+        nombres = re.findall(r'class="nombre">([^<]+)<', html.decode("utf-8", "replace"))
+        personas, bus = nombres.count("persona"), nombres.count("bus")
         verificar(s == 200, f"HTTP {s}")
         verificar(personas >= 3 and bus >= 1, f"{personas} personas y {bus} bus")
         return f"{personas} personas y {bus} bus en la imagen de referencia"
@@ -210,8 +211,8 @@ def casos(c, con_camara):
         s, h, cuerpo = c.get("/bitacora/exportar/")
         verificar(s == 200 and "text/csv" in h.get("Content-Type", ""), f"HTTP {s}")
         filas = cuerpo.decode("utf-8-sig").strip().splitlines()
-        return f"CSV con {len(filas) - 1} avistamiento(s)"
-    yield "CF-13", "Exportar la bitácora a CSV", cf13
+        return f"CSV con {len(filas) - 1} detección(es)"
+    yield "CF-13", "Exportar el historial a CSV", cf13
 
     def cf14():
         s, _, _ = c.get("/api/camara/iniciar/")

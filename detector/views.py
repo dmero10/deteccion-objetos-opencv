@@ -224,7 +224,7 @@ def vaciar_bitacora(request):
     borrados, _ = Avistamiento.objects.all().delete()
     if camara.registrador is not None:
         camara.registrador.reiniciar()
-    messages.success(request, f"Bitácora vaciada: se eliminaron {borrados} avistamientos.")
+    messages.success(request, f"Historial borrado: se eliminaron {borrados} detecciones.")
     return redirect("detector:bitacora")
 
 

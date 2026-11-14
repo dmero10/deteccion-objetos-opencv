@@ -28,9 +28,9 @@ class ObservatorioTests(TestCase):
     def test_pagina_principal(self):
         r = self.client.get(reverse("detector:index"))
         self.assertEqual(r.status_code, 200)
-        self.assertContains(r, "Observatorio")
+        self.assertContains(r, "Detección en vivo")
         self.assertContains(r, 'id="video"')
-        self.assertContains(r, "Guardar en bitácora")
+        self.assertContains(r, "Guardar en el historial")
 
     def test_api_estado(self):
         datos = self.client.get(reverse("detector:api_estado")).json()
@@ -87,7 +87,7 @@ class AlbumTests(TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.context["descubiertas"], 0)
         self.assertEqual(sum(len(s["casillas"]) for s in r.context["secciones"]), 80)
-        self.assertContains(r, "sin descubrir", count=80)
+        self.assertContains(r, "Aún no detectado", count=80)
 
     def test_album_usa_la_foto_mas_confiable(self):
         crear(confianza=0.6)
@@ -159,7 +159,7 @@ class BitacoraTests(TestCase):
         self.assertEqual(self.client.get(reverse("detector:vaciar_bitacora")).status_code, 405)
         r = self.client.post(reverse("detector:vaciar_bitacora"), follow=True)
         self.assertEqual(Avistamiento.objects.count(), 0)
-        self.assertContains(r, "Bitácora vaciada")
+        self.assertContains(r, "Historial borrado")
 
 
 class AnalizarTests(TestCase):

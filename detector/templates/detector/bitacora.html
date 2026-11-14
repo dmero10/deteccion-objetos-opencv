@@ -1,17 +1,16 @@
 {% extends "detector/base.html" %}
 {% load lince %}
 
-{% block titulo %}Bitácora{% endblock %}
+{% block titulo %}Historial{% endblock %}
 {% block clase_pagina %}bitacora{% endblock %}
 
 {% block contenido %}
-<div class="encabezado">
-  <p class="ceja">03 — Bitácora</p>
-  <h1>Todo lo que Lince vio, <em>anotado con fecha y hora.</em></h1>
-  <p class="bajada">Cada avistamiento se guarda en PostgreSQL con su recorte, su confianza y cuántos objetos de esa clase había en escena.</p>
+<div class="titulo-pagina">
+  <h1>Historial de detecciones</h1>
+  <p>Objetos detectados por la cámara y guardados en PostgreSQL.</p>
 </div>
 
-<form class="filtros" method="get" action="{% url 'detector:bitacora' %}">
+<form class="tarjeta filtros" method="get" action="{% url 'detector:bitacora' %}">
   <label>Objeto
     <select name="objeto">
       <option value="">Todos</option>
@@ -20,102 +19,94 @@
   </label>
   <label>Desde <input type="date" name="desde" value="{{ filtros.desde }}"></label>
   <label>Hasta <input type="date" name="hasta" value="{{ filtros.hasta }}"></label>
-  <div class="filtros-acciones">
-    <button class="boton boton-primario" type="submit">Filtrar</button>
-    {% if filtros.objeto or filtros.desde or filtros.hasta %}<a class="boton boton-texto" href="{% url 'detector:bitacora' %}">Limpiar</a>{% endif %}
-  </div>
-  <div class="filtros-extra">
-    <a class="boton" href="{% url 'detector:exportar_csv' %}{% if querystring %}?{{ querystring }}{% endif %}">Exportar CSV</a>
-  </div>
+  <button class="boton boton-primario" type="submit">Filtrar</button>
+  {% if filtros.objeto or filtros.desde or filtros.hasta %}<a class="boton" href="{% url 'detector:bitacora' %}">Quitar filtros</a>{% endif %}
+  <a class="boton derecha" href="{% url 'detector:exportar_csv' %}{% if querystring %}?{{ querystring }}{% endif %}">Exportar CSV</a>
 </form>
 
-<section class="cifras" aria-label="Resumen">
-  <div class="cifra"><span class="cifra-valor">{{ resumen.total }}</span><span class="cifra-etiqueta">avistamientos</span></div>
-  <div class="cifra"><span class="cifra-valor">{{ resumen.distintos }}</span><span class="cifra-etiqueta">objetos distintos</span></div>
-  <div class="cifra"><span class="cifra-valor">{% if hora_pico %}{{ hora_pico.hora|stringformat:"02d" }}:00{% else %}—{% endif %}</span><span class="cifra-etiqueta">hora con más actividad</span></div>
-  <div class="cifra"><span class="cifra-valor cifra-fecha">{% if resumen.ultima %}{{ resumen.ultima|date:"j b, H:i" }}{% else %}—{% endif %}</span><span class="cifra-etiqueta">último avistamiento</span></div>
-</section>
+<div class="cifras">
+  <div class="tarjeta cifra"><strong>{{ resumen.total }}</strong><span>detecciones guardadas</span></div>
+  <div class="tarjeta cifra"><strong>{{ resumen.distintos }}</strong><span>objetos distintos</span></div>
+  <div class="tarjeta cifra"><strong>{% if hora_pico %}{{ hora_pico.hora|stringformat:"02d" }}:00{% else %}-{% endif %}</strong><span>hora con más detecciones</span></div>
+  <div class="tarjeta cifra"><strong>{% if resumen.ultima %}{{ resumen.ultima|date:"H:i" }}{% else %}-{% endif %}</strong><span>última detección{% if resumen.ultima %} ({{ resumen.ultima|date:"j/m/Y" }}){% endif %}</span></div>
+</div>
 
 {% if resumen.total %}
 <div class="graficos">
-  <section class="tarjeta grafico" aria-labelledby="g-horas">
-    <h2 class="titulo-seccion" id="g-horas">Actividad por hora del día</h2>
-    <div class="barras-horas" role="img" aria-label="Avistamientos por hora del día; el detalle está en la tabla a continuación">
+  <section class="tarjeta" aria-labelledby="g-horas">
+    <h2 id="g-horas">Detecciones por hora del día</h2>
+    <div class="barras-horas" role="img" aria-label="Detecciones por hora del día; el detalle está en la tabla oculta a continuación">
       {% for h in horas %}
-      <span class="barra-hora" tabindex="0" data-tip="{{ h.hora|stringformat:'02d' }}:00 – {{ h.hora|stringformat:'02d' }}:59 · {{ h.total }} avistamiento{{ h.total|pluralize }}">
+      <span class="barra-hora" tabindex="0" data-tip="{{ h.hora|stringformat:'02d' }}:00 · {{ h.total }}">
         <span class="barra-relleno{% if not h.total %} vacia{% endif %}" style="height: {{ h.porcentaje }}%"></span>
       </span>
       {% endfor %}
     </div>
     <div class="eje-horas" aria-hidden="true"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
     <table class="solo-lectores">
-      <caption>Avistamientos por hora</caption>
-      <tr><th>Hora</th><th>Avistamientos</th></tr>
+      <caption>Detecciones por hora</caption>
+      <tr><th>Hora</th><th>Detecciones</th></tr>
       {% for h in horas %}<tr><td>{{ h.hora }}:00</td><td>{{ h.total }}</td></tr>{% endfor %}
     </table>
   </section>
 
-  <section class="tarjeta grafico" aria-labelledby="g-top">
-    <h2 class="titulo-seccion" id="g-top">Los más vistos</h2>
+  <section class="tarjeta" aria-labelledby="g-top">
+    <h2 id="g-top">Más detectados</h2>
     <ol class="ranking">
       {% for t in top %}
-      <li>
-        <a href="?objeto={{ t.clase }}">
-          <span class="ranking-nombre">{{ t.nombre }}</span>
-          <span class="ranking-barra" data-tip="{{ t.nombre }} · {{ t.total }} avistamiento{{ t.total|pluralize }}"><span style="width: {{ t.porcentaje }}%"></span></span>
-          <span class="ranking-total">{{ t.total }}</span>
-        </a>
-      </li>
+      <li><a href="?objeto={{ t.clase }}">
+        <span class="ranking-nombre">{{ t.nombre }}</span>
+        <span class="ranking-barra"><span style="width: {{ t.porcentaje }}%"></span></span>
+        <span class="ranking-total">{{ t.total }}</span>
+      </a></li>
       {% endfor %}
     </ol>
   </section>
 </div>
 {% endif %}
 
-<section aria-labelledby="titulo-registros">
-  <div class="registros-cabecera">
-    <h2 class="titulo-seccion" id="titulo-registros">Registros</h2>
-    {% if pagina.paginator.count %}
-    <p class="registros-cuenta">{{ pagina.start_index }}–{{ pagina.end_index }} de {{ pagina.paginator.count }}</p>
-    {% endif %}
+<section class="tarjeta" aria-labelledby="titulo-registros">
+  <div class="tarjeta-cabecera">
+    <h2 id="titulo-registros">Registros</h2>
+    {% if pagina.paginator.count %}<span class="texto-suave">{{ pagina.start_index }}–{{ pagina.end_index }} de {{ pagina.paginator.count }}</span>{% endif %}
   </div>
 
   {% if pagina.object_list %}
-  <ol class="fichas">
-    {% for a in pagina %}
-    <li class="ficha">
-      <img src="{% url 'detector:imagen_avistamiento' a.pk %}" alt="{{ a.nombre }}" loading="lazy">
-      <div class="ficha-texto">
-        <p class="ficha-nombre">{{ a.nombre }}{% if a.cantidad > 1 %} <span>×{{ a.cantidad }}</span>{% endif %}</p>
-        <p class="ficha-meta"><span class="medidor"><span style="width: {{ a.confianza|entero_pct }}%"></span></span>{{ a.confianza|porcentaje }}</p>
-        <p class="ficha-fecha"><time datetime="{{ a.fecha|date:'c' }}">{{ a.fecha|date:"D j b Y · H:i:s" }}</time></p>
-      </div>
-      <span class="ficha-id">#{{ a.pk }}</span>
-    </li>
-    {% endfor %}
-  </ol>
+  <div class="tabla-contenedor">
+    <table class="tabla">
+      <thead><tr><th>Imagen</th><th>Objeto</th><th>Confianza</th><th>Cantidad</th><th>Fecha y hora</th></tr></thead>
+      <tbody>
+        {% for a in pagina %}
+        <tr>
+          <td><img src="{% url 'detector:imagen_avistamiento' a.pk %}" alt="{{ a.nombre }}" loading="lazy"></td>
+          <td class="nombre">{{ a.nombre }}</td>
+          <td class="num"><span class="medidor"><span style="width: {{ a.confianza|entero_pct }}%"></span></span>{{ a.confianza|porcentaje }}</td>
+          <td class="num">{{ a.cantidad }}</td>
+          <td class="num">{{ a.fecha|date:"d/m/Y H:i:s" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
   {% if pagina.has_other_pages %}
   <nav class="paginacion" aria-label="Páginas">
-    {% if pagina.has_previous %}<a class="boton" href="?{% if querystring %}{{ querystring }}&{% endif %}pagina={{ pagina.previous_page_number }}">← Anterior</a>{% else %}<span></span>{% endif %}
+    {% if pagina.has_previous %}<a class="boton" href="?{% if querystring %}{{ querystring }}&{% endif %}pagina={{ pagina.previous_page_number }}">Anterior</a>{% else %}<span></span>{% endif %}
     <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
-    {% if pagina.has_next %}<a class="boton" href="?{% if querystring %}{{ querystring }}&{% endif %}pagina={{ pagina.next_page_number }}">Siguiente →</a>{% else %}<span></span>{% endif %}
+    {% if pagina.has_next %}<a class="boton" href="?{% if querystring %}{{ querystring }}&{% endif %}pagina={{ pagina.next_page_number }}">Siguiente</a>{% else %}<span></span>{% endif %}
   </nav>
   {% endif %}
   {% else %}
-  <div class="vacio-grande">
-    <p class="vacio-titulo">La bitácora está en blanco.</p>
-    <p>{% if filtros.objeto or filtros.desde or filtros.hasta %}Ningún avistamiento coincide con esos filtros.{% else %}Enciende la cámara en el <a href="{% url 'detector:index' %}">Observatorio</a> y deja que Lince mire a su alrededor.{% endif %}</p>
-  </div>
+  <p class="vacio">{% if filtros.objeto or filtros.desde or filtros.hasta %}No hay detecciones con esos filtros.{% else %}Todavía no hay detecciones. Enciende la cámara en <a href="{% url 'detector:index' %}">En vivo</a>.{% endif %}</p>
   {% endif %}
 </section>
 
 {% if resumen.total %}
 <form class="zona-peligro" method="post" action="{% url 'detector:vaciar_bitacora' %}"
-      onsubmit="return confirm('¿Borrar los {{ resumen.total }} avistamientos de la bitácora? El álbum también se vaciará. No se puede deshacer.');">
+      onsubmit="return confirm('¿Borrar las {{ resumen.total }} detecciones guardadas? No se puede deshacer.');">
   {% csrf_token %}
-  <p>¿Empezar de cero? Esto borra todos los avistamientos y vacía el álbum.</p>
-  <button class="boton boton-peligro" type="submit">Vaciar bitácora</button>
+  <span>Borrar todo el historial (también reinicia los objetos descubiertos).</span>
+  <button class="boton boton-peligro" type="submit">Borrar historial</button>
 </form>
 {% endif %}
 {% endblock %}

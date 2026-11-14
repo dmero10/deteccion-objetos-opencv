@@ -1,4 +1,4 @@
-# Lince — detector de objetos en tiempo real (Django + OpenCV)
+# Detector de objetos en tiempo real (Django + OpenCV)
 
 Práctica – Construcción de Software · UNEMI
 
@@ -12,10 +12,10 @@ video y guarda cada avistamiento en **PostgreSQL**. La interfaz web está hecha 
 
 | Página | Para qué sirve |
 |---|---|
-| **01 · Observatorio** | Video en vivo con cajas, nombre y confianza de cada objeto. Lecturas (FPS, inferencia), objetos en escena, ajustes en vivo y una tira con los últimos avistamientos. |
-| **02 · Álbum** | Las 80 clases de COCO como láminas agrupadas por categoría. Cada lámina se completa la primera vez que la cámara ve ese objeto (con la mejor foto guardada). |
-| **03 · Bitácora** | Historial guardado en PostgreSQL: filtros por objeto y fecha, actividad por hora, los más vistos, recortes de cada avistamiento y exportación a CSV. |
-| **04 · Analizar imagen** | Sube una foto y el mismo detector la analiza (no se guarda). |
+| **En vivo** | Video de la cámara con cajas, nombre y confianza de cada objeto. Estado (FPS, inferencia), objetos en pantalla, ajustes y últimas detecciones guardadas. |
+| **Objetos** | Las 80 clases de COCO agrupadas por categoría. Cada una se marca como descubierta (con su mejor foto) la primera vez que la cámara la detecta. |
+| **Historial** | Detecciones guardadas en PostgreSQL: filtros por objeto y fecha, detecciones por hora, los más detectados, tabla con recortes y exportación a CSV. |
+| **Analizar imagen** | Sube una foto y el mismo detector la analiza (no se guarda). |
 
 ## Avance por sesión
 
@@ -52,16 +52,15 @@ Se eligió **YOLO11n**: misma velocidad que YOLOv8n y más precisión. Con la we
 confianza al detectar una persona subió de 57–77 % (YOLOv4-tiny) a 84–94 %.
 
 ### Sesión 3 – Interfaz y pruebas ✅
-- **Interfaz rediseñada** con identidad propia ("Lince", estética de cuaderno de campo):
-  tipografías Fraunces + IBM Plex Mono incluidas en el proyecto (funciona sin internet),
-  tema claro y tema oscuro automático, diseño adaptable a celular, atajos de teclado
-  (`Espacio` cámara, `D` detección, `G` guardar, `F` foto) y accesibilidad (foco visible,
-  textos alternativos, tabla para lectores de pantalla en los gráficos).
-- **Bitácora en PostgreSQL** (modelo `Avistamiento`): por cada clase se guarda como máximo
+- **Interfaz mejorada** con un diseño simple y claro: cuatro secciones (En vivo, Objetos,
+  Historial, Analizar imagen), tema claro y oscuro automático según el sistema, diseño
+  adaptable a celular, atajos de teclado (`Espacio` cámara, `D` detección, `F` foto) y
+  accesibilidad (foco visible, textos alternativos, tabla para lectores de pantalla).
+- **Historial en PostgreSQL** (modelo `Avistamiento`): por cada clase se guarda como máximo
   un avistamiento cada 15 s, con la caja más confiable, la cantidad de objetos y un recorte
   JPEG. Gráfico de actividad por hora, ranking, filtros, paginación, CSV y panel de admin.
-- **Álbum de hallazgos** con las 80 clases y un sello animado cuando se descubre un objeto
-  nuevo.
+- **Objetos descubiertos**: las 80 clases con su mejor foto y un aviso cuando aparece un
+  objeto por primera vez.
 - **Analizar imagen**: subida con arrastrar y soltar, validación de tipo y tamaño.
 - **Pruebas en tres niveles** (detalle en [docs/CASOS_DE_PRUEBA.md](docs/CASOS_DE_PRUEBA.md)):
   - 68 pruebas automatizadas (`python manage.py test`): **68 / 68 pasan**.
@@ -81,8 +80,8 @@ detector/
   models.py                 Modelo Avistamiento
   clases.py                 80 clases de COCO (inglés / español) y sus categorías
   views.py / urls.py        Páginas y API
-  templates/detector/       Plantillas (base, observatorio, álbum, bitácora, analizar)
-  static/detector/          CSS, JavaScript y tipografías
+  templates/detector/       Plantillas (base, en vivo, objetos, historial, analizar)
+  static/detector/          CSS y JavaScript
   modelos/yolo11n.onnx      Modelo ya exportado (~11 MB, incluido en el repositorio)
   datos_prueba/bus.jpg      Imagen de referencia para las pruebas
   tests/                    Pruebas automatizadas (un archivo por módulo)
@@ -128,7 +127,7 @@ python manage.py runserver
 
 Abre <http://127.0.0.1:8000/> y presiona **Encender cámara** (o la tecla `Espacio`).
 
-Opcional, para ver la bitácora desde el panel de administración de Django:
+Opcional, para ver el historial desde el panel de administración de Django:
 `python manage.py createsuperuser` y entra a <http://127.0.0.1:8000/admin/>.
 
 ## Pruebas
@@ -143,12 +142,12 @@ python scripts/prueba_funcional.py --informe docs/resultado_pruebas.md
 
 | Ruta | Método | Descripción |
 |---|---|---|
-| `/` | GET | Observatorio (video en vivo) |
-| `/album/` | GET | Álbum de las 80 clases |
-| `/album/<clase>/` | GET | Redirige a la bitácora filtrada por ese objeto |
+| `/` | GET | En vivo (video de la cámara) |
+| `/album/` | GET | Objetos (las 80 clases) |
+| `/album/<clase>/` | GET | Redirige al historial filtrado por ese objeto |
 | `/bitacora/` | GET | Historial con filtros `?objeto=&desde=&hasta=&pagina=` |
 | `/bitacora/exportar/` | GET | CSV con los mismos filtros |
-| `/bitacora/vaciar/` | POST | Borra todos los avistamientos |
+| `/bitacora/vaciar/` | POST | Borra todo el historial |
 | `/avistamientos/<id>/imagen/` | GET | Recorte JPEG de un avistamiento |
 | `/analizar/` | GET / POST | Formulario y resultado del análisis de una imagen |
 | `/video/` | GET | Flujo MJPEG de la cámara |
@@ -170,9 +169,15 @@ python scripts/prueba_funcional.py --informe docs/resultado_pruebas.md
 | `DETECTOR_MODELO` | Archivo en `detector/modelos/<nombre>.onnx` | yolo11n |
 | `DETECTOR_CONFIANZA` | Confianza mínima inicial (0-1) | 0.45 |
 | `DETECTOR_NMS` | Umbral para eliminar cajas repetidas | 0.45 |
-| `DETECTOR_REGISTRAR` | Guardar avistamientos en la bitácora (1/0) | 1 |
+| `DETECTOR_REGISTRAR` | Guardar las detecciones en el historial (1/0) | 1 |
 | `DETECTOR_INTERVALO_REGISTRO` | Segundos mínimos entre registros del mismo objeto | 15 |
 | `ANALIZAR_MAX_MB` | Tamaño máximo de una imagen subida | 8 |
+
+## ¿Dónde quedan los datos?
+
+El historial se guarda en la base PostgreSQL **de cada computadora**, no en el repositorio.
+Quien clone el proyecto empieza con el historial vacío; tus datos se quedan en tu PC
+hasta que pulses **Borrar historial** o elimines la base de datos.
 
 ## Solución de problemas
 
@@ -192,6 +197,3 @@ python scripts/prueba_funcional.py --informe docs/resultado_pruebas.md
 - Modelo YOLO11n de [Ultralytics](https://github.com/ultralytics/ultralytics), licencia
   AGPL-3.0, entrenado con el dataset [COCO](https://cocodataset.org/). La imagen de prueba
   `bus.jpg` también es de Ultralytics.
-- Tipografías [Fraunces](https://github.com/undercasetype/Fraunces) e
-  [IBM Plex Mono](https://github.com/IBM/plex), licencia SIL Open Font License 1.1
-  (incluidas en `detector/static/detector/fuentes/`).

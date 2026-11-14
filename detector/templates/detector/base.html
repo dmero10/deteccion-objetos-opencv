@@ -5,45 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token }}">
   <meta name="color-scheme" content="light dark">
-  <title>{% block titulo %}Lince{% endblock %} · Lince</title>
-  <link rel="preload" href="{% static 'detector/fuentes/fraunces-latin-wght-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <title>{% block titulo %}Detector de objetos{% endblock %} · Detector de objetos</title>
   <link rel="stylesheet" href="{% static 'detector/estilos.css' %}">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3 17c5-9 21-9 26 0-5 9-21 9-26 0z' fill='none' stroke='%231c1a16' stroke-width='2.4'/%3E%3Ccircle cx='16' cy='17' r='4.6' fill='%23d6451b'/%3E%3Cpath d='M9 9l2-6 3 5M23 9l-2-6-3 5' fill='none' stroke='%231c1a16' stroke-width='2.2' stroke-linejoin='round'/%3E%3C/svg%3E">
 </head>
 <body class="pagina-{% block clase_pagina %}general{% endblock %}">
   <a class="saltar" href="#contenido">Saltar al contenido</a>
 
   <header class="cabecera">
-    <a class="marca" href="{% url 'detector:index' %}" aria-label="Lince, inicio">
-      <svg class="marca-logo" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M3 17c5-9 21-9 26 0-5 9-21 9-26 0z" class="logo-ojo"/>
-        <circle cx="16" cy="17" r="4.6" class="logo-iris"/>
-        <path d="M9 9l2-6 3 5M23 9l-2-6-3 5" class="logo-orejas"/>
-      </svg>
-      <span class="marca-texto">
-        <span class="marca-nombre">Lince</span>
-        <span class="marca-sub">detector de objetos</span>
-      </span>
-    </a>
-
+    <a class="marca" href="{% url 'detector:index' %}"><span class="marca-icono" aria-hidden="true"></span>Detector de objetos</a>
     {% with vista=request.resolver_match.url_name %}
     <nav class="navegacion" aria-label="Secciones">
-      <a href="{% url 'detector:index' %}" {% if vista == 'index' %}aria-current="page"{% endif %}><span class="nav-num">01</span>Observatorio</a>
-      <a href="{% url 'detector:album' %}" {% if vista == 'album' %}aria-current="page"{% endif %}><span class="nav-num">02</span>Álbum</a>
-      <a href="{% url 'detector:bitacora' %}" {% if vista == 'bitacora' %}aria-current="page"{% endif %}><span class="nav-num">03</span>Bitácora</a>
-      <a href="{% url 'detector:analizar' %}" {% if vista == 'analizar' %}aria-current="page"{% endif %}><span class="nav-num">04</span>Analizar imagen</a>
+      <a href="{% url 'detector:index' %}" {% if vista == 'index' %}aria-current="page"{% endif %}>En vivo</a>
+      <a href="{% url 'detector:album' %}" {% if vista == 'album' %}aria-current="page"{% endif %}>Objetos</a>
+      <a href="{% url 'detector:bitacora' %}" {% if vista == 'bitacora' %}aria-current="page"{% endif %}>Historial</a>
+      <a href="{% url 'detector:analizar' %}" {% if vista == 'analizar' %}aria-current="page"{% endif %}>Analizar imagen</a>
     </nav>
     {% endwith %}
-
-    <a class="pildora" id="pildora" href="{% url 'detector:index' %}" data-estado="apagada">
-      <span class="pildora-luz" aria-hidden="true"></span>
-      <span id="pildora-texto">Cámara apagada</span>
-    </a>
+    <a class="etiqueta" id="pildora" href="{% url 'detector:index' %}" data-estado="apagada"><span id="pildora-texto">Cámara apagada</span></a>
   </header>
 
   {% if messages %}
   <div class="avisos" role="status">
-    {% for m in messages %}<p class="aviso-flash aviso-{{ m.tags }}">{{ m }}</p>{% endfor %}
+    {% for m in messages %}<p class="aviso-flash">{{ m }}</p>{% endfor %}
   </div>
   {% endif %}
 
@@ -51,11 +34,7 @@
     {% block contenido %}{% endblock %}
   </main>
 
-  <footer class="pie">
-    <span>Lince</span>
-    <span>Django · OpenCV <code>cv2.dnn</code> · YOLO11n · PostgreSQL</span>
-    <span>Construcción de Software · UNEMI</span>
-  </footer>
+  <footer class="pie">Django · OpenCV (cv2.dnn) · YOLO11n · PostgreSQL — Construcción de Software, UNEMI</footer>
 
   <script>window.LINCE = { estado: "{% url 'detector:api_estado' %}" };</script>
   <script src="{% static 'detector/base.js' %}"></script>
