@@ -11,4 +11,5 @@ urlpatterns = [
     path("api/estado/", views.api_estado, name="api_estado"),
     path("api/camara/iniciar/", views.api_iniciar, name="api_iniciar"),
     path("api/camara/detener/", views.api_detener, name="api_detener"),
+    path("api/deteccion/", views.api_configurar_deteccion, name="api_deteccion"),
 ]

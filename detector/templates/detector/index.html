@@ -36,10 +36,36 @@
     </dl>
     <p id="error" class="error" hidden></p>
 
+    <h2>Detección de objetos</h2>
+    <label class="interruptor">
+      <input id="det-activa" type="checkbox" {% if estado.deteccion.activa %}checked{% endif %}>
+      <span class="riel" aria-hidden="true"></span>
+      <span>Detectar objetos</span>
+    </label>
+
+    <label class="deslizador" for="det-confianza">
+      <span>Confianza mínima <strong id="det-confianza-valor">{% widthratio estado.deteccion.confianza 1 100 %}%</strong></span>
+      <input id="det-confianza" type="range" min="5" max="95" step="5"
+             value="{% widthratio estado.deteccion.confianza 1 100 %}">
+    </label>
+
+    <dl class="datos">
+      <div><dt>Modelo</dt><dd id="det-modelo">{{ estado.deteccion.modelo }}</dd></div>
+      <div><dt>Objetos en pantalla</dt><dd id="det-total">0</dd></div>
+      <div><dt>Tiempo de inferencia</dt><dd id="det-ms">-</dd></div>
+      <div><dt>Detecciones por segundo</dt><dd id="det-fps">-</dd></div>
+    </dl>
+    <p id="det-error" class="error" hidden></p>
+
+    <ul id="det-lista" class="objetos">
+      <li class="vacio">Inicia la cámara para ver los objetos detectados.</li>
+    </ul>
+
     <h2>Cómo funciona</h2>
     <ol class="pasos">
       <li>Django abre la cámara con <code>cv2.VideoCapture</code>.</li>
-      <li>OpenCV procesa cada frame y lo codifica en JPEG.</li>
+      <li>En un hilo aparte, OpenCV ejecuta la red <strong>YOLO11n</strong> (ONNX) con <code>cv2.dnn</code> sobre el frame más reciente (80 clases de COCO).</li>
+      <li>Las cajas y etiquetas se dibujan con <code>cv2.rectangle</code> y <code>cv2.putText</code>.</li>
       <li>El servidor envía los frames como flujo MJPEG al navegador.</li>
     </ol>
   </aside>
@@ -53,6 +79,7 @@
     estado: "{% url 'detector:api_estado' %}",
     iniciar: "{% url 'detector:api_iniciar' %}",
     detener: "{% url 'detector:api_detener' %}",
+    deteccion: "{% url 'detector:api_deteccion' %}",
   };
 </script>
 <script src="{% static 'detector/app.js' %}"></script>

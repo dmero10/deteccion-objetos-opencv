@@ -110,3 +110,13 @@ CAMERA_ESPEJO = os.environ.get("CAMERA_ESPEJO", "1") == "1"
 CAMERA_CALIDAD_JPEG = int(os.environ.get("CAMERA_CALIDAD_JPEG", "80"))
 # Segundos sin espectadores antes de apagar la cámara automáticamente
 CAMERA_APAGADO_INACTIVO = float(os.environ.get("CAMERA_APAGADO_INACTIVO", "15"))
+
+# --- Detector de objetos (YOLO11 en ONNX, ejecutado con cv2.dnn) ---
+MODELOS_DIR = BASE_DIR / "detector" / "modelos"
+# Nombre del archivo en detector/modelos/<nombre>.onnx (ver scripts/exportar_modelo.py)
+DETECTOR_MODELO = os.environ.get("DETECTOR_MODELO", "yolo11n")
+DETECTOR_ACTIVO = os.environ.get("DETECTOR_ACTIVO", "1") == "1"
+# Confianza mínima (0-1) para mostrar un objeto
+DETECTOR_CONFIANZA = float(os.environ.get("DETECTOR_CONFIANZA", "0.45"))
+# Umbral de NMS para eliminar cajas repetidas sobre el mismo objeto
+DETECTOR_NMS = float(os.environ.get("DETECTOR_NMS", "0.45"))

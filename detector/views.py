@@ -1,3 +1,4 @@
+import json
 import time
 
 from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
@@ -39,6 +40,27 @@ def api_iniciar(request):
 @require_POST
 def api_detener(request):
     camara.detener()
+    return JsonResponse(camara.estado())
+
+
+@require_POST
+def api_configurar_deteccion(request):
+    """Recibe {"activa": true/false, "confianza": 0.5} y lo aplica al video en vivo."""
+    try:
+        datos = json.loads(request.body or "{}")
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido"}, status=400)
+    if not isinstance(datos, dict):
+        return JsonResponse({"error": "Se esperaba un objeto JSON"}, status=400)
+
+    activa = datos.get("activa")
+    if activa is not None and not isinstance(activa, bool):
+        return JsonResponse({"error": "'activa' debe ser true o false"}, status=400)
+    confianza = datos.get("confianza")
+    if confianza is not None and (isinstance(confianza, bool) or not isinstance(confianza, (int, float))):
+        return JsonResponse({"error": "'confianza' debe ser un número entre 0 y 1"}, status=400)
+
+    camara.configurar_deteccion(activa=activa, confianza=confianza)
     return JsonResponse(camara.estado())
 
 

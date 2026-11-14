@@ -15,9 +15,11 @@ db.sqlite3
 media/
 staticfiles/
 
-# Archivos de modelos pesados (se descargan con un script)
+# Modelos: solo se versiona el que usa la aplicación (yolo11n.onnx, ~11 MB)
+detector/modelos/*
+!detector/modelos/yolo11n.onnx
+*.pt
 *.weights
-*.onnx
 *.pb
 
 # Material de referencia

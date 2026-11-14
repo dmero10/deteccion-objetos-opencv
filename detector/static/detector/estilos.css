@@ -138,6 +138,36 @@ h2 { font-size: 0.95rem; margin: 0 0 10px; color: var(--suave); text-transform: 
   color: var(--peligro);
   font-size: 0.9rem;
 }
+/* --- Controles de detección --- */
+.interruptor { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 14px; font-weight: 500; }
+.interruptor input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.riel {
+  width: 38px; height: 22px; border-radius: 999px; background: #cfd5e0;
+  position: relative; transition: background 0.15s; flex: none;
+}
+.riel::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px;
+  border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); transition: transform 0.15s;
+}
+.interruptor input:checked + .riel { background: var(--primario); }
+.interruptor input:checked + .riel::after { transform: translateX(16px); }
+.interruptor input:focus-visible + .riel { outline: 2px solid var(--primario); outline-offset: 2px; }
+
+.deslizador { display: grid; gap: 6px; margin-bottom: 10px; color: var(--suave); font-size: 0.92rem; }
+.deslizador strong { color: var(--texto); font-variant-numeric: tabular-nums; }
+.deslizador input { width: 100%; accent-color: var(--primario); }
+
+.objetos { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; }
+.objetos li {
+  display: grid; grid-template-columns: 12px 1fr auto auto; align-items: center; gap: 10px;
+  padding: 7px 10px; border: 1px solid var(--borde); border-radius: 8px; font-size: 0.92rem;
+}
+.objetos li.vacio { display: block; color: var(--suave); border-style: dashed; text-align: center; }
+.objetos .punto { width: 12px; height: 12px; border-radius: 3px; }
+.objetos .nombre { font-weight: 600; text-transform: capitalize; }
+.objetos .cantidad { color: var(--suave); font-variant-numeric: tabular-nums; }
+.objetos .conf { font-variant-numeric: tabular-nums; color: var(--suave); min-width: 3ch; text-align: right; }
+
 .pasos { margin: 0; padding-left: 20px; color: var(--suave); font-size: 0.92rem; }
 .pasos li { margin-bottom: 6px; }
 
