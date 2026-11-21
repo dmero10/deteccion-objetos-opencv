@@ -1,0 +1,62 @@
+Creating test database for alias 'default' ('test_deteccion_objetos')...
+Found 14 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: admin, auth, contenttypes, detector, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying detector.0001_initial... OK
+  Applying sessions.0001_initial...test_cu01_1_pagina_inicial (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu01_1_pagina_inicial)
+Al abrir la aplicación se ve la página En vivo con la cámara apagada y el menú. ... ok
+test_cu01_2_navegar_por_el_menu (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu01_2_navegar_por_el_menu)
+Cada opción del menú abre su página. ... ok
+test_cu01_3_encender_la_camara (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu01_3_encender_la_camara)
+El botón enciende la cámara: aparece el video y cambian los indicadores. ... ok
+test_cu01_4_apagar_la_camara (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu01_4_apagar_la_camara) ... ok
+test_cu02_1_detecta_objetos_en_el_video (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu02_1_detecta_objetos_en_el_video)
+Con la cámara viendo la escena, el panel lista los objetos detectados. ... ok
+test_cu02_2_las_cajas_se_dibujan_sobre_el_video (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu02_2_las_cajas_se_dibujan_sobre_el_video)
+El cuadro que envía el servidor trae las cajas de colores dibujadas por OpenCV. ... ok
+test_cu02_3_pausar_y_reanudar_la_deteccion (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu02_3_pausar_y_reanudar_la_deteccion) ... ok
+test_cu02_4_subir_la_confianza_minima (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu02_4_subir_la_confianza_minima)
+Con confianza 95 % desaparecen los objetos dudosos; el valor llega al servidor. ... ok
+test_cu02_5_capturar_foto (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu02_5_capturar_foto) ... ok
+test_cu03_1_ultimas_detecciones_y_aviso (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu03_1_ultimas_detecciones_y_aviso)
+Lo detectado aparece en 'Últimas detecciones guardadas' y avisa del objeto nuevo. ... ok
+test_cu03_2_historial (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu03_2_historial)
+El historial muestra en tabla lo guardado y permite filtrar por objeto. ... ok
+test_cu03_3_objetos_descubiertos (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu03_3_objetos_descubiertos) ... ok
+test_cu03_4_analizar_imagen (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu03_4_analizar_imagen)
+Subir una foto muestra la imagen con las cajas y la lista de objetos. ... ok
+test_cu03_5_pantalla_de_celular (detector.tests.funcionales.test_casos_de_uso.CasosDeUsoTests.test_cu03_5_pantalla_de_celular)
+En un celular (390 px) la página se adapta sin desplazamiento horizontal. ... ok
+[21/Nov/2026 17:11:18,857] - Broken pipe from ('127.0.0.1', 60667)
+[21/Nov/2026 17:11:18,859] - Broken pipe from ('127.0.0.1', 49669)
+[21/Nov/2026 17:11:18,859] - Broken pipe from ('127.0.0.1', 53746)
+
+----------------------------------------------------------------------
+Ran 14 tests in 28.382s
+
+OK
+Destroying test database for alias 'default' ('test_deteccion_objetos')...
+ OK
+System check identified no issues (0 silenced).

@@ -84,6 +84,9 @@ else:
             "PASSWORD": os.environ.get("DB_PASSWORD", ""),
             "HOST": os.environ.get("DB_HOST", "localhost"),
             "PORT": os.environ.get("DB_PORT", "5432"),
+            # Si PostgreSQL está apagado, fallar en 5 s en lugar de quedarse esperando
+            # (en Windows cada intento a un puerto cerrado puede tardar ~20 s).
+            "OPTIONS": {"connect_timeout": 5},
         }
     }
 

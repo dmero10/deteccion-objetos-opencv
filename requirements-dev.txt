@@ -1,0 +1,4 @@
+-r requirements.txt
+# Solo para desarrollo y pruebas
+coverage>=7.6
+selenium>=4.20

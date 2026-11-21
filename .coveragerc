@@ -1,0 +1,18 @@
+# Configuración de coverage: qué código se mide al ejecutar las pruebas
+[run]
+source = detector, config
+branch = True
+omit =
+    */tests/*
+    */migrations/*
+    config/asgi.py
+    config/wsgi.py
+
+[report]
+show_missing = True
+skip_empty = True
+precision = 1
+
+[html]
+directory = docs/cobertura
+title = Cobertura de pruebas - Detector de objetos

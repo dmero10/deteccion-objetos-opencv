@@ -1,0 +1,88 @@
+test_error_si_la_camara_no_abre (detector.tests.unitarias.test_camara.CapturaTests.test_error_si_la_camara_no_abre) ... ok
+test_iniciar_dos_veces_no_abre_otra_camara (detector.tests.unitarias.test_camara.CapturaTests.test_iniciar_dos_veces_no_abre_otra_camara) ... ok
+test_procesar_mantiene_tamano_y_dibuja_barra (detector.tests.unitarias.test_camara.CapturaTests.test_procesar_mantiene_tamano_y_dibuja_barra) ... ok
+test_se_apaga_sola_sin_espectadores (detector.tests.unitarias.test_camara.CapturaTests.test_se_apaga_sola_sin_espectadores) ... ok
+test_stream_entrega_partes_jpeg (detector.tests.unitarias.test_camara.CapturaTests.test_stream_entrega_partes_jpeg) ... ok
+test_confianza_se_limita_entre_5_y_95 (detector.tests.unitarias.test_camara.DeteccionEnCamaraTests.test_confianza_se_limita_entre_5_y_95) ... ok
+test_configurar_registro (detector.tests.unitarias.test_camara.DeteccionEnCamaraTests.test_configurar_registro) ... ok
+test_desactivar_durante_la_inferencia (detector.tests.unitarias.test_camara.DeteccionEnCamaraTests.test_desactivar_durante_la_inferencia)
+Si se apaga la detección mientras un frame se procesa, ese frame no reescribe resultados. ... ok
+test_desactivar_limpia_resultados (detector.tests.unitarias.test_camara.DeteccionEnCamaraTests.test_desactivar_limpia_resultados) ... ok
+test_detectar_pasa_resultados_al_registrador (detector.tests.unitarias.test_camara.DeteccionEnCamaraTests.test_detectar_pasa_resultados_al_registrador) ... ok
+test_detectar_publica_resultados (detector.tests.unitarias.test_camara.DeteccionEnCamaraTests.test_detectar_publica_resultados) ... ok
+test_hilos_de_captura_y_deteccion (detector.tests.unitarias.test_camara.DeteccionEnCamaraTests.test_hilos_de_captura_y_deteccion) ... ok
+test_procesar_dibuja_ultimas_detecciones_y_encola_frame_limpio (detector.tests.unitarias.test_camara.DeteccionEnCamaraTests.test_procesar_dibuja_ultimas_detecciones_y_encola_frame_limpio) ... ok
+test_sin_modelo_el_video_sigue (detector.tests.unitarias.test_camara.DeteccionEnCamaraTests.test_sin_modelo_el_video_sigue) ... ok
+test_con_espectadores_no_se_apaga (detector.tests.unitarias.test_camara.EspectadoresTests.test_con_espectadores_no_se_apaga) ... ok
+test_sin_espectadores_espera_el_tiempo_configurado (detector.tests.unitarias.test_camara.EspectadoresTests.test_sin_espectadores_espera_el_tiempo_configurado) ... ok
+test_detener_sin_haber_iniciado (detector.tests.unitarias.test_camara.EstadoApagadaTests.test_detener_sin_haber_iniciado) ... ok
+test_estado_inicial (detector.tests.unitarias.test_camara.EstadoApagadaTests.test_estado_inicial) ... ok
+test_flujo_vacio_si_la_camara_no_abre (detector.tests.unitarias.test_camara.EstadoApagadaTests.test_flujo_vacio_si_la_camara_no_abre) ... ok
+test_foto_con_camara_apagada (detector.tests.unitarias.test_camara.EstadoApagadaTests.test_foto_con_camara_apagada) ... ok
+test_contrasena_incorrecta_devuelve_codigo_3 (detector.tests.unitarias.test_preparar_bd.PrepararBdTests.test_contrasena_incorrecta_devuelve_codigo_3) ... ok
+test_crea_la_base_si_no_existe (detector.tests.unitarias.test_preparar_bd.PrepararBdTests.test_crea_la_base_si_no_existe) ... ok
+test_no_hace_nada_si_ya_existe (detector.tests.unitarias.test_preparar_bd.PrepararBdTests.test_no_hace_nada_si_ya_existe) ... ok
+test_sin_servidor_devuelve_codigo_4 (detector.tests.unitarias.test_preparar_bd.PrepararBdTests.test_sin_servidor_devuelve_codigo_4) ... ok
+test_caja_en_el_borde_se_ajusta_al_frame (detector.tests.unitarias.test_registro.RecortarTests.test_caja_en_el_borde_se_ajusta_al_frame) ... ok
+test_caja_fuera_del_frame (detector.tests.unitarias.test_registro.RecortarTests.test_caja_fuera_del_frame) ... ok
+test_caja_pequena_no_se_agranda (detector.tests.unitarias.test_registro.RecortarTests.test_caja_pequena_no_se_agranda) ... ok
+test_recorta_con_margen_y_reduce (detector.tests.unitarias.test_registro.RecortarTests.test_recorta_con_margen_y_reduce) ... ok
+test_cada_clase_tiene_su_propio_intervalo (detector.tests.unitarias.test_registro.RegistradorTests.test_cada_clase_tiene_su_propio_intervalo) ... ok
+test_error_de_base_de_datos_no_detiene_la_deteccion (detector.tests.unitarias.test_registro.RegistradorTests.test_error_de_base_de_datos_no_detiene_la_deteccion) ... ok
+test_evento_trae_lo_que_necesita_la_interfaz (detector.tests.unitarias.test_registro.RegistradorTests.test_evento_trae_lo_que_necesita_la_interfaz) ... ok
+test_marca_nuevo_solo_lo_que_no_estaba_descubierto (detector.tests.unitarias.test_registro.RegistradorTests.test_marca_nuevo_solo_lo_que_no_estaba_descubierto) ... ok
+test_no_repite_la_misma_clase_dentro_del_intervalo (detector.tests.unitarias.test_registro.RegistradorTests.test_no_repite_la_misma_clase_dentro_del_intervalo) ... ok
+test_recientes_guarda_los_ultimos_primero (detector.tests.unitarias.test_registro.RegistradorTests.test_recientes_guarda_los_ultimos_primero) ... ok
+test_reiniciar_olvida_intervalos_y_recientes (detector.tests.unitarias.test_registro.RegistradorTests.test_reiniciar_olvida_intervalos_y_recientes) ... ok
+test_sin_detecciones_o_desactivado_no_guarda (detector.tests.unitarias.test_registro.RegistradorTests.test_sin_detecciones_o_desactivado_no_guarda) ... ok
+test_tras_un_error_se_puede_reintentar (detector.tests.unitarias.test_registro.RegistradorTests.test_tras_un_error_se_puede_reintentar) ... ok
+test_un_registro_por_clase_con_la_caja_mas_confiable (detector.tests.unitarias.test_registro.RegistradorTests.test_un_registro_por_clase_con_la_caja_mas_confiable) ... ok
+test_vuelve_a_registrar_cuando_pasa_el_intervalo (detector.tests.unitarias.test_registro.RegistradorTests.test_vuelve_a_registrar_cuando_pasa_el_intervalo) ... ok
+test_acepta_png (detector.tests.unitarias.test_utilidades.AnalizarArchivoTests.test_acepta_png) ... ok
+test_archivo_demasiado_grande (detector.tests.unitarias.test_utilidades.AnalizarArchivoTests.test_archivo_demasiado_grande) ... ok
+test_archivo_que_no_es_imagen (detector.tests.unitarias.test_utilidades.AnalizarArchivoTests.test_archivo_que_no_es_imagen) ... ok
+test_archivo_vacio (detector.tests.unitarias.test_utilidades.AnalizarArchivoTests.test_archivo_vacio) ... ok
+test_devuelve_imagen_marcada_y_resumen (detector.tests.unitarias.test_utilidades.AnalizarArchivoTests.test_devuelve_imagen_marcada_y_resumen) ... ok
+test_pasa_la_confianza_al_detector (detector.tests.unitarias.test_utilidades.AnalizarArchivoTests.test_pasa_la_confianza_al_detector) ... ok
+test_reduce_las_imagenes_grandes_antes_de_detectar (detector.tests.unitarias.test_utilidades.AnalizarArchivoTests.test_reduce_las_imagenes_grandes_antes_de_detectar) ... ok
+test_sin_modelo (detector.tests.unitarias.test_utilidades.AnalizarArchivoTests.test_sin_modelo) ... ok
+test_entero_pct (detector.tests.unitarias.test_utilidades.FiltrosPlantillaTests.test_entero_pct) ... ok
+test_porcentaje (detector.tests.unitarias.test_utilidades.FiltrosPlantillaTests.test_porcentaje) ... ok
+test_porcentaje_con_valor_invalido (detector.tests.unitarias.test_utilidades.FiltrosPlantillaTests.test_porcentaje_con_valor_invalido) ... ok
+test_categoria_fuera_de_rango (detector.tests.unitarias.test_yolo.CargaDelModeloTests.test_categoria_fuera_de_rango) ... ok
+test_el_modelo_se_carga_una_sola_vez (detector.tests.unitarias.test_yolo.CargaDelModeloTests.test_el_modelo_se_carga_una_sola_vez) ... ok
+test_80_clases_coco (detector.tests.unitarias.test_yolo.ClasesTests.test_80_clases_coco) ... ok
+test_categorias_cubren_las_80_clases_sin_huecos (detector.tests.unitarias.test_yolo.ClasesTests.test_categorias_cubren_las_80_clases_sin_huecos) ... ok
+test_acepta_la_salida_ya_transpuesta (detector.tests.unitarias.test_yolo.DecodificarSalidaTests.test_acepta_la_salida_ya_transpuesta) ... ok
+test_caja_que_se_sale_queda_dentro_del_frame (detector.tests.unitarias.test_yolo.DecodificarSalidaTests.test_caja_que_se_sale_queda_dentro_del_frame) ... ok
+test_camara_hd_reescala_las_cajas (detector.tests.unitarias.test_yolo.DecodificarSalidaTests.test_camara_hd_reescala_las_cajas)
+Frame 1280x720: el letterbox lo reduce a la mitad y agrega 140 px arriba y abajo. ... ok
+test_convierte_coordenadas_al_frame (detector.tests.unitarias.test_yolo.DecodificarSalidaTests.test_convierte_coordenadas_al_frame) ... ok
+test_filtra_por_confianza (detector.tests.unitarias.test_yolo.DecodificarSalidaTests.test_filtra_por_confianza) ... ok
+test_nms_por_clase_conserva_objetos_superpuestos (detector.tests.unitarias.test_yolo.DecodificarSalidaTests.test_nms_por_clase_conserva_objetos_superpuestos) ... ok
+test_nms_quita_cajas_repetidas_de_la_misma_clase (detector.tests.unitarias.test_yolo.DecodificarSalidaTests.test_nms_quita_cajas_repetidas_de_la_misma_clase) ... ok
+test_ordena_de_mayor_a_menor_confianza (detector.tests.unitarias.test_yolo.DecodificarSalidaTests.test_ordena_de_mayor_a_menor_confianza) ... ok
+test_salida_vacia (detector.tests.unitarias.test_yolo.DecodificarSalidaTests.test_salida_vacia) ... ok
+test_umbral_exacto_se_incluye (detector.tests.unitarias.test_yolo.DecodificarSalidaTests.test_umbral_exacto_se_incluye) ... ok
+test_imagen_vertical (detector.tests.unitarias.test_yolo.LetterboxTests.test_imagen_vertical) ... ok
+test_relleno_gris (detector.tests.unitarias.test_yolo.LetterboxTests.test_relleno_gris) ... ok
+test_cajas_dentro_de_la_imagen (detector.tests.unitarias.test_yolo.ModeloRealTests.test_cajas_dentro_de_la_imagen) ... ok
+test_detecta_personas_y_bus_en_imagen_de_referencia (detector.tests.unitarias.test_yolo.ModeloRealTests.test_detecta_personas_y_bus_en_imagen_de_referencia) ... ok
+test_imagen_negra_no_tiene_objetos (detector.tests.unitarias.test_yolo.ModeloRealTests.test_imagen_negra_no_tiene_objetos) ... ok
+test_resultado_repetible (detector.tests.unitarias.test_yolo.ModeloRealTests.test_resultado_repetible) ... ok
+test_subir_la_confianza_nunca_agrega_objetos (detector.tests.unitarias.test_yolo.ModeloRealTests.test_subir_la_confianza_nunca_agrega_objetos) ... ok
+test_color_hex (detector.tests.unitarias.test_yolo.UtilidadesTests.test_color_hex) ... ok
+test_dibujar_caja_que_se_sale_del_frame (detector.tests.unitarias.test_yolo.UtilidadesTests.test_dibujar_caja_que_se_sale_del_frame) ... ok
+test_dibujar_pinta_cajas_sin_rellenarlas (detector.tests.unitarias.test_yolo.UtilidadesTests.test_dibujar_pinta_cajas_sin_rellenarlas) ... ok
+test_error_si_falta_el_modelo (detector.tests.unitarias.test_yolo.UtilidadesTests.test_error_si_falta_el_modelo) ... ok
+test_letterbox_mantiene_proporcion (detector.tests.unitarias.test_yolo.UtilidadesTests.test_letterbox_mantiene_proporcion) ... ok
+test_resumir_agrupa_y_ordena (detector.tests.unitarias.test_yolo.UtilidadesTests.test_resumir_agrupa_y_ordena) ... ok
+test_sin_tildes_para_putText (detector.tests.unitarias.test_yolo.UtilidadesTests.test_sin_tildes_para_putText) ... ok
+
+----------------------------------------------------------------------
+Ran 78 tests in 1.923s
+
+OK
+Found 78 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

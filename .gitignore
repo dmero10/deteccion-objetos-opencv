@@ -30,3 +30,11 @@ detector/modelos/*
 .idea/
 Thumbs.db
 .DS_Store
+
+# Datos y reportes de cobertura (se regeneran con coverage)
+.coverage
+docs/cobertura/
+
+# Documentos de Word de la práctica (no se suben)
+*.docx
+~$*

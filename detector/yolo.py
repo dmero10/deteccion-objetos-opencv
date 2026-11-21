@@ -112,9 +112,11 @@ def decodificar_salida(salida, confianza, nms, escala, desplazamiento, forma_fra
     w, h = np.minimum(w, ancho - x), np.minimum(h, alto - y)
     cajas = np.stack([x, y, w, h], axis=1)
 
-    # NMS separado por clase: una persona no "tapa" al celular que sostiene
+    # NMS separado por clase: una persona no "tapa" al celular que sostiene.
+    # Umbral 0: las cajas ya se filtraron arriba con ">=" y OpenCV usa ">" (descartaría
+    # un objeto con confianza exactamente igual al mínimo).
     indices = cv2.dnn.NMSBoxesBatched(
-        cajas.tolist(), confianzas.tolist(), clases.tolist(), confianza, nms
+        cajas.tolist(), confianzas.tolist(), clases.tolist(), 0.0, nms
     )
     resultados = []
     for i in np.array(indices).flatten():

@@ -1,0 +1,92 @@
+Creating test database for alias 'default' ('test_deteccion_objetos')...
+Found 56 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: admin, auth, contenttypes, detector, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying detector.0001_initial... OK
+  Applying sessions.0001_initial...test_analizar_imagen_real (detector.tests.integracion.test_flujos.FlujoAnalizarImagenTests.test_analizar_imagen_real) ... ok
+test_confianza_del_formulario_se_respeta (detector.tests.integracion.test_flujos.FlujoAnalizarImagenTests.test_confianza_del_formulario_se_respeta) ... ok
+test_borrar_historial_reinicia_todo (detector.tests.integracion.test_flujos.FlujoHistorialTests.test_borrar_historial_reinicia_todo) ... ok
+test_desde_objetos_al_historial_filtrado (detector.tests.integracion.test_flujos.FlujoHistorialTests.test_desde_objetos_al_historial_filtrado) ... ok
+test_filtro_y_csv_coinciden (detector.tests.integracion.test_flujos.FlujoHistorialTests.test_filtro_y_csv_coinciden) ... ok
+test_desactivado_no_guarda (detector.tests.integracion.test_registro_bd.RegistradorTests.test_desactivado_no_guarda) ... ok
+test_error_de_base_de_datos_no_rompe (detector.tests.integracion.test_registro_bd.RegistradorTests.test_error_de_base_de_datos_no_rompe) ... ok
+test_guarda_un_avistamiento_por_clase_con_recorte_jpeg (detector.tests.integracion.test_registro_bd.RegistradorTests.test_guarda_un_avistamiento_por_clase_con_recorte_jpeg) ... ok
+test_marca_nuevo_hallazgo_solo_la_primera_vez (detector.tests.integracion.test_registro_bd.RegistradorTests.test_marca_nuevo_hallazgo_solo_la_primera_vez) ... ok
+test_otra_clase_no_espera_el_intervalo (detector.tests.integracion.test_registro_bd.RegistradorTests.test_otra_clase_no_espera_el_intervalo) ... ok
+test_recientes_en_orden_inverso (detector.tests.integracion.test_registro_bd.RegistradorTests.test_recientes_en_orden_inverso) ... ok
+test_reiniciar_olvida_el_estado (detector.tests.integracion.test_registro_bd.RegistradorTests.test_reiniciar_olvida_el_estado) ... ok
+test_respeta_el_intervalo_por_clase (detector.tests.integracion.test_registro_bd.RegistradorTests.test_respeta_el_intervalo_por_clase) ... ok
+test_vuelve_a_registrar_pasado_el_intervalo (detector.tests.integracion.test_registro_bd.RegistradorTests.test_vuelve_a_registrar_pasado_el_intervalo) ... ok
+test_admin_requiere_inicio_de_sesion (detector.tests.integracion.test_rutas.RutasTests.test_admin_requiere_inicio_de_sesion) ... ok
+test_api_estado_devuelve_json (detector.tests.integracion.test_rutas.RutasTests.test_api_estado_devuelve_json) ... ok
+test_archivos_estaticos (detector.tests.integracion.test_rutas.RutasTests.test_archivos_estaticos)
+Django encuentra el CSS/JS y las páginas los enlazan (el servidor de pruebas no los sirve). ... ok
+test_cada_url_apunta_a_su_vista (detector.tests.integracion.test_rutas.RutasTests.test_cada_url_apunta_a_su_vista) ... ok
+test_imagen_de_avistamiento (detector.tests.integracion.test_rutas.RutasTests.test_imagen_de_avistamiento) ... ok
+test_menu_marca_la_pagina_actual (detector.tests.integracion.test_rutas.RutasTests.test_menu_marca_la_pagina_actual) ... ok
+test_paginas_enlazan_a_las_demas (detector.tests.integracion.test_rutas.RutasTests.test_paginas_enlazan_a_las_demas) ... ok
+test_paginas_responden_200_con_su_plantilla (detector.tests.integracion.test_rutas.RutasTests.test_paginas_responden_200_con_su_plantilla) ... ok
+test_ruta_inexistente_da_404 (detector.tests.integracion.test_rutas.RutasTests.test_ruta_inexistente_da_404) ... ok
+test_rutas_de_accion_exigen_token_csrf (detector.tests.integracion.test_rutas.RutasTests.test_rutas_de_accion_exigen_token_csrf) ... ok
+test_rutas_de_accion_rechazan_get (detector.tests.integracion.test_rutas.RutasTests.test_rutas_de_accion_rechazan_get) ... ok
+test_album_usa_la_foto_mas_confiable (detector.tests.integracion.test_vistas.AlbumTests.test_album_usa_la_foto_mas_confiable) ... ok
+test_album_vacio_muestra_80_laminas_ocultas (detector.tests.integracion.test_vistas.AlbumTests.test_album_vacio_muestra_80_laminas_ocultas) ... ok
+test_lamina_lleva_a_la_bitacora_filtrada (detector.tests.integracion.test_vistas.AlbumTests.test_lamina_lleva_a_la_bitacora_filtrada) ... ok
+test_analiza_con_detector_simulado (detector.tests.integracion.test_vistas.AnalizarTests.test_analiza_con_detector_simulado) ... ok
+test_analiza_con_el_modelo_real (detector.tests.integracion.test_vistas.AnalizarTests.test_analiza_con_el_modelo_real) ... ok
+test_analizar_no_guarda_en_la_bitacora (detector.tests.integracion.test_vistas.AnalizarTests.test_analizar_no_guarda_en_la_bitacora) ... ok
+test_archivo_que_no_es_imagen (detector.tests.integracion.test_vistas.AnalizarTests.test_archivo_que_no_es_imagen) ... ok
+test_formulario (detector.tests.integracion.test_vistas.AnalizarTests.test_formulario) ... ok
+test_imagen_demasiado_grande (detector.tests.integracion.test_vistas.AnalizarTests.test_imagen_demasiado_grande) ... ok
+test_sin_archivo (detector.tests.integracion.test_vistas.AnalizarTests.test_sin_archivo) ... ok
+test_configurar (detector.tests.integracion.test_vistas.ApiDeteccionTests.test_configurar) ... ok
+test_solo_post (detector.tests.integracion.test_vistas.ApiDeteccionTests.test_solo_post) ... ok
+test_valida_datos (detector.tests.integracion.test_vistas.ApiDeteccionTests.test_valida_datos) ... ok
+test_exportar_csv (detector.tests.integracion.test_vistas.BitacoraTests.test_exportar_csv) ... ok
+test_filtra_por_fecha (detector.tests.integracion.test_vistas.BitacoraTests.test_filtra_por_fecha) ... ok
+test_filtra_por_objeto (detector.tests.integracion.test_vistas.BitacoraTests.test_filtra_por_objeto) ... ok
+test_filtros_invalidos_se_ignoran (detector.tests.integracion.test_vistas.BitacoraTests.test_filtros_invalidos_se_ignoran) ... ok
+test_imagen_del_avistamiento (detector.tests.integracion.test_vistas.BitacoraTests.test_imagen_del_avistamiento) ... ok
+test_lista_y_resume (detector.tests.integracion.test_vistas.BitacoraTests.test_lista_y_resume) ... ok
+test_paginacion (detector.tests.integracion.test_vistas.BitacoraTests.test_paginacion) ... ok
+test_vaciar_solo_por_post (detector.tests.integracion.test_vistas.BitacoraTests.test_vaciar_solo_por_post) ... ok
+test_api_estado (detector.tests.integracion.test_vistas.ObservatorioTests.test_api_estado) ... ok
+test_foto_con_camara_apagada (detector.tests.integracion.test_vistas.ObservatorioTests.test_foto_con_camara_apagada) ... ok
+test_foto_con_camara_encendida (detector.tests.integracion.test_vistas.ObservatorioTests.test_foto_con_camara_encendida) ... ok
+test_iniciar_y_detener_solo_por_post (detector.tests.integracion.test_vistas.ObservatorioTests.test_iniciar_y_detener_solo_por_post) ... ok
+test_pagina_principal (detector.tests.integracion.test_vistas.ObservatorioTests.test_pagina_principal) ... ok
+test_video_devuelve_503_si_no_hay_camara (detector.tests.integracion.test_vistas.ObservatorioTests.test_video_devuelve_503_si_no_hay_camara) ... ok
+test_camara_ocupada_informa_el_error (detector.tests.integracion.test_flujos.FlujoCamaraCompletoTests.test_camara_ocupada_informa_el_error) ... ok
+test_cambiar_ajustes_en_vivo (detector.tests.integracion.test_flujos.FlujoCamaraCompletoTests.test_cambiar_ajustes_en_vivo) ... ok
+test_dos_pestanas_comparten_una_sola_camara (detector.tests.integracion.test_flujos.FlujoCamaraCompletoTests.test_dos_pestanas_comparten_una_sola_camara) ... ok
+test_flujo_completo (detector.tests.integracion.test_flujos.FlujoCamaraCompletoTests.test_flujo_completo) ... ok
+
+----------------------------------------------------------------------
+Ran 56 tests in 3.891s
+
+OK
+Destroying test database for alias 'default' ('test_deteccion_objetos')...
+ OK
+System check identified no issues (0 silenced).

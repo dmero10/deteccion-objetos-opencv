@@ -87,7 +87,7 @@ confianza al detectar una persona subió de 57–77 % (YOLOv4-tiny) a 84–94 %.
   objeto por primera vez.
 - **Analizar imagen**: subida con arrastrar y soltar, validación de tipo y tamaño.
 - **Pruebas en tres niveles** (detalle en [docs/CASOS_DE_PRUEBA.md](docs/CASOS_DE_PRUEBA.md)):
-  - 72 pruebas automatizadas (`python manage.py test`): **72 / 72 pasan**.
+  - Pruebas automatizadas (`python manage.py test`), ver la sección Pruebas.
   - 15 pruebas funcionales del sistema en funcionamiento con cámara real y PostgreSQL
     (`python scripts/prueba_funcional.py`): **15 / 15 pasan**
     ([informe](docs/resultado_pruebas.md)).
@@ -152,11 +152,25 @@ Opcional, para ver el historial desde el panel de administración de Django:
 
 ## Pruebas
 
+La forma más fácil: **doble clic en `probar.bat`**. Ejecuta los tres niveles de pruebas,
+muestra la cobertura y abre el reporte en el navegador (`docs/cobertura/index.html`).
+
+| Nivel | Carpeta | Qué prueba | Cantidad |
+|---|---|---|---|
+| Unitarias | `detector/tests/unitarias/` | Funciones críticas aisladas (detección con OpenCV, cámara, registrador, análisis de imágenes), sin base de datos ni cámara | 78 |
+| Integración | `detector/tests/integracion/` | Rutas de Django y flujos completos con PostgreSQL | 56 |
+| Funcionales | `detector/tests/funcionales/` | Casos de uso desde un navegador Edge automático (Selenium), con capturas en `docs/evidencias/` | 14 |
+
+A mano (necesita `pip install -r requirements-dev.txt`):
+
 ```bash
-python manage.py test                     # 72 pruebas automatizadas (no necesitan cámara)
-python scripts/prueba_funcional.py        # con el servidor corriendo y la cámara libre
-python scripts/prueba_funcional.py --informe docs/resultado_pruebas.md
+python manage.py test                                 # todas
+python manage.py test detector.tests.unitarias        # solo un nivel
+coverage run manage.py test && coverage report        # con cobertura
+python scripts/prueba_funcional.py                    # sistema real: servidor corriendo + cámara
 ```
+
+Los registros de la última ejecución están en `docs/logs/`.
 
 ## Rutas
 

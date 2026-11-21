@@ -1,4 +1,4 @@
-"""Módulo de detección (Sesión 2): decodificación de YOLO, NMS, dibujo y utilidades."""
+"""UNITARIAS: módulo de detección con OpenCV (yolo.py) y clases de COCO (clases.py)."""
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -11,9 +11,9 @@ from detector.clases import CATEGORIAS, CLASES, categoria_de
 from detector.yolo import (DetectorYOLO, ModeloNoEncontrado, color_hex, decodificar_salida,
                            dibujar_detecciones, letterbox, modelo_disponible, resumir, sin_tildes)
 
-from .utiles import DetectorFalso
+from ..utiles import DetectorFalso
 
-IMAGEN_BUS = Path(__file__).resolve().parent.parent / "datos_prueba" / "bus.jpg"
+IMAGEN_BUS = Path(__file__).resolve().parents[2] / "datos_prueba" / "bus.jpg"
 
 
 class ClasesTests(SimpleTestCase):
@@ -104,6 +104,67 @@ class DecodificarSalidaTests(SimpleTestCase):
         ])
         self.assertEqual({d["nombre"] for d in resultado}, {"persona", "celular"})
 
+    def test_camara_hd_reescala_las_cajas(self):
+        """Frame 1280x720: el letterbox lo reduce a la mitad y agrega 140 px arriba y abajo."""
+        _, escala, desplazamiento = letterbox(np.zeros((720, 1280, 3), dtype=np.uint8))
+        self.assertEqual((escala, desplazamiento), (0.5, (0, 140)))
+        (d,) = decodificar_salida(self.salida([(320, 320, 100, 50, 39, 0.8)]), 0.45, 0.45,
+                                  escala, desplazamiento, (720, 1280, 3))
+        self.assertEqual(d["nombre"], "botella")
+        self.assertEqual(d["caja"], (540, 310, 200, 100))
+
+    def test_acepta_la_salida_ya_transpuesta(self):
+        transpuesta = self.salida([(320, 320, 100, 200, 0, 0.9)])[0].T[np.newaxis]  # (1, 8400, 84)
+        (d,) = decodificar_salida(transpuesta, 0.45, 0.45, 1.0, (0, 80), (480, 640, 3))
+        self.assertEqual(d["caja"], (270, 140, 100, 200))
+
+    def test_caja_que_se_sale_queda_dentro_del_frame(self):
+        (d,) = self.decodificar([(620, 520, 200, 200, 0, 0.9)])
+        x, y, w, h = d["caja"]
+        self.assertLessEqual(x + w, 640)
+        self.assertLessEqual(y + h, 480)
+
+    def test_ordena_de_mayor_a_menor_confianza(self):
+        resultado = self.decodificar([
+            (100, 200, 50, 50, 41, 0.6),
+            (300, 200, 50, 50, 39, 0.95),
+            (500, 200, 50, 50, 0, 0.7),
+        ])
+        self.assertEqual([d["nombre"] for d in resultado], ["botella", "persona", "taza"])
+
+    def test_salida_vacia(self):
+        self.assertEqual(self.decodificar([]), [])
+
+    def test_umbral_exacto_se_incluye(self):
+        self.assertEqual(len(self.decodificar([(320, 320, 100, 100, 0, 0.5)], confianza=0.5)), 1)
+
+
+class LetterboxTests(SimpleTestCase):
+    def test_imagen_vertical(self):
+        imagen, escala, (dx, dy) = letterbox(np.zeros((1080, 810, 3), dtype=np.uint8))
+        self.assertEqual(imagen.shape, (640, 640, 3))
+        self.assertAlmostEqual(escala, 640 / 1080)
+        self.assertEqual(dy, 0)
+        self.assertEqual(dx, (640 - round(810 * escala)) // 2)
+
+    def test_relleno_gris(self):
+        imagen, _, _ = letterbox(np.zeros((480, 640, 3), dtype=np.uint8))
+        self.assertEqual(tuple(imagen[0, 0]), (114, 114, 114), "Relleno gris como en el entrenamiento")
+        self.assertEqual(tuple(imagen[320, 320]), (0, 0, 0), "La imagen original queda al centro")
+
+
+class CargaDelModeloTests(SimpleTestCase):
+    def test_el_modelo_se_carga_una_sola_vez(self):
+        with mock.patch("detector.yolo._detector", None), \
+                mock.patch("detector.yolo.DetectorYOLO") as clase:
+            from detector.yolo import obtener_detector
+            primero, segundo = obtener_detector(), obtener_detector()
+        self.assertIs(primero, segundo)
+        clase.assert_called_once()
+
+    def test_categoria_fuera_de_rango(self):
+        self.assertEqual(categoria_de(99), "Otros")
+
 
 @unittest.skipUnless(modelo_disponible(), "Falta detector/modelos/yolo11n.onnx")
 class ModeloRealTests(SimpleTestCase):
@@ -130,3 +191,12 @@ class ModeloRealTests(SimpleTestCase):
         for d in self.detector.detectar(imagen, 0.45):
             x, y, w, h = d["caja"]
             self.assertTrue(0 <= x < ancho and 0 <= y < alto and x + w <= ancho + 1 and y + h <= alto + 1, d)
+
+    def test_subir_la_confianza_nunca_agrega_objetos(self):
+        imagen = cv2.imread(str(IMAGEN_BUS))
+        cantidades = [len(self.detector.detectar(imagen, c)) for c in (0.25, 0.45, 0.7, 0.9)]
+        self.assertEqual(cantidades, sorted(cantidades, reverse=True), cantidades)
+
+    def test_resultado_repetible(self):
+        imagen = cv2.imread(str(IMAGEN_BUS))
+        self.assertEqual(self.detector.detectar(imagen, 0.45), self.detector.detectar(imagen, 0.45))

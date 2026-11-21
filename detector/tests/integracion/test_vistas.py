@@ -12,9 +12,9 @@ from django.utils import timezone
 from detector.models import Avistamiento
 from detector.yolo import modelo_disponible
 
-from .utiles import DetectorFalso
+from ..utiles import DetectorFalso
 
-IMAGEN_BUS = Path(__file__).resolve().parent.parent / "datos_prueba" / "bus.jpg"
+IMAGEN_BUS = Path(__file__).resolve().parents[2] / "datos_prueba" / "bus.jpg"
 
 
 def crear(clase=0, nombre="persona", confianza=0.8, hace_horas=0):

@@ -1,4 +1,4 @@
-"""Captura de video, hilos y transmisión MJPEG (Sesión 1) + integración con la detección (Sesión 2)."""
+"""UNITARIAS: cámara (camera.py) con cámara y detector simulados: captura, MJPEG, hilos y estado."""
 import time
 from unittest import mock
 
@@ -6,7 +6,7 @@ from django.test import SimpleTestCase
 
 from detector.yolo import ModeloNoEncontrado
 
-from .utiles import (CapturaFalsa, DetectorFalso, camara_de_prueba, camara_encendida,
+from ..utiles import (CapturaFalsa, DetectorFalso, camara_de_prueba, camara_encendida,
                      frame_negro)
 
 
@@ -52,6 +52,44 @@ class CapturaTests(SimpleTestCase):
                 break
             time.sleep(0.05)
         self.assertFalse(camara.activa, "La cámara debe liberarse si nadie mira el video")
+
+
+class EstadoApagadaTests(SimpleTestCase):
+    def setUp(self):
+        self.camara = camara_de_prueba()
+
+    def test_estado_inicial(self):
+        e = self.camara.estado()
+        self.assertFalse(e["activa"])
+        self.assertEqual((e["fps"], e["resolucion"], e["clientes"]), (0, "-", 0))
+        self.assertEqual(e["deteccion"]["objetos"], [])
+        self.assertFalse(e["registro"]["disponible"], "Sin registrador no se guarda nada")
+
+    def test_foto_con_camara_apagada(self):
+        self.assertIsNone(self.camara.foto())
+
+    @mock.patch("detector.camera.cv2.VideoCapture")
+    def test_flujo_vacio_si_la_camara_no_abre(self, video_capture):
+        video_capture.return_value.isOpened.return_value = False
+        self.assertEqual(list(self.camara.frames_mjpeg()), [])
+
+    def test_detener_sin_haber_iniciado(self):
+        self.camara.detener()  # no debe lanzar excepción
+        self.assertFalse(self.camara.activa)
+
+
+class EspectadoresTests(SimpleTestCase):
+    def test_con_espectadores_no_se_apaga(self):
+        camara = camara_de_prueba(apagado_inactivo=0)
+        camara._clientes = 1
+        self.assertFalse(camara._sin_espectadores())
+
+    def test_sin_espectadores_espera_el_tiempo_configurado(self):
+        camara = camara_de_prueba(apagado_inactivo=10)
+        with mock.patch("detector.camera.time.monotonic", side_effect=[100.0, 100.0, 105.0, 111.0]):
+            self.assertFalse(camara._sin_espectadores())  # empieza a contar
+            self.assertFalse(camara._sin_espectadores())  # 5 s
+            self.assertTrue(camara._sin_espectadores())   # 11 s > 10 s
 
 
 class DeteccionEnCamaraTests(SimpleTestCase):

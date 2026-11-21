@@ -1,0 +1,19 @@
+Name                                          Stmts   Miss Branch BrPart  Cover   Missing
+-----------------------------------------------------------------------------------------
+config\settings.py                               45      2      8      2  92.5%   16, 72
+config\urls.py                                    3      0      0      0 100.0%
+detector\admin.py                                20      3      0      0  85.0%   18, 22, 26
+detector\apps.py                                  5      0      0      0 100.0%
+detector\camera.py                              223     11     64      4  94.1%   131-136, 145->151, 182, 206, 213-215
+detector\clases.py                                8      0      4      0 100.0%
+detector\management\commands\preparar_bd.py      37      7      6      1  81.4%   20-24, 33-34
+detector\models.py                               26      2      0      0  92.3%   31, 35
+detector\registro.py                             91      5     24      3  93.0%   64-66, 105, 108, 135->137
+detector\templatetags\lince.py                   14      0      0      0 100.0%
+detector\urls.py                                  4      0      0      0 100.0%
+detector\views.py                               176      3     42      2  97.7%   225->227, 261, 283-284
+detector\yolo.py                                108      1     16      1  98.4%   125
+-----------------------------------------------------------------------------------------
+TOTAL                                           760     34    164     13  94.7%
+
+5 empty files skipped.

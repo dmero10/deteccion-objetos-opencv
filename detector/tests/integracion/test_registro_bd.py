@@ -1,4 +1,4 @@
-"""Registro de avistamientos en PostgreSQL (Sesión 3)."""
+"""INTEGRACIÓN: el registrador guardando de verdad en PostgreSQL (registro.py + models.py + BD)."""
 from unittest import mock
 
 import cv2
@@ -7,19 +7,9 @@ from django.db import DatabaseError
 from django.test import TestCase
 
 from detector.models import Avistamiento
-from detector.registro import Registrador, recortar
+from detector.registro import Registrador
 
-from .utiles import DetectorFalso, frame_negro, frame_ruido
-
-
-class RecortarTests(TestCase):
-    def test_recorta_con_margen_y_reduce(self):
-        recorte = recortar(frame_ruido(), (50, 40, 200, 300))
-        self.assertLessEqual(max(recorte.shape[:2]), 320)
-        self.assertGreater(recorte.shape[0], recorte.shape[1], "La forma de la caja se conserva")
-
-    def test_caja_degenerada(self):
-        self.assertIsNone(recortar(frame_negro(), (700, 500, 10, 10)))
+from ..utiles import DetectorFalso, frame_ruido
 
 
 class RegistradorTests(TestCase):
